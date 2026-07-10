@@ -465,6 +465,16 @@
         box-shadow: inset 0 -2px 0 #e02e49;
       }
 
+      /* A sub-checkpoint that exists on both sides but has changed. */
+      .diff-changed {
+        background: #ffe8cc;
+        color: #7a3d00;
+        padding: 1px 2px;
+        border-radius: 2px;
+        font-weight: 600;
+        box-shadow: inset 0 -2px 0 #f97316;
+      }
+
       .diff-summary {
         font-family: "Inter", sans-serif;
         font-size: 11px;
@@ -634,6 +644,10 @@
       }
 
       .item-header.expanded ~ .subcheckpoints-section {
+        display: block;
+      }
+
+      .subcheckpoint-header.expanded ~ .subcheckpoints-section {
         display: block;
       }
 
@@ -1649,11 +1663,9 @@
           if (it.NavnNynorsk) searchNames.push(String(it.NavnNynorsk));
           if (Array.isArray(it.Undersjekkpunkter)) {
             it.Undersjekkpunkter.forEach((sub) => {
-              if (sub && sub.Id !== undefined)
+              if (sub && sub.Id !== undefined && sub.Id !== null)
                 searchIds.add(String(sub.Id).toLowerCase());
-              if (sub && sub.Navn) searchNames.push(String(sub.Navn));
-              if (sub && sub.NavnNynorsk)
-                searchNames.push(String(sub.NavnNynorsk));
+              collectTokens(sub);
             });
           }
         };
@@ -1762,35 +1774,8 @@
         details.appendChild(testColumn);
         itemElement.appendChild(details);
 
-        // Subcheckpoints section
-        let subResultToShow = null;
-        if (
-          itemData.status === "prodOnly" &&
-          itemData.prodItem &&
-          Array.isArray(itemData.prodItem.Undersjekkpunkter) &&
-          itemData.prodItem.Undersjekkpunkter.length > 0
-        ) {
-          subResultToShow = compareSubcheckpoints(
-            itemData.prodItem.Undersjekkpunkter,
-            null,
-          );
-        } else if (
-          itemData.status === "testOnly" &&
-          itemData.testItem &&
-          Array.isArray(itemData.testItem.Undersjekkpunkter) &&
-          itemData.testItem.Undersjekkpunkter.length > 0
-        ) {
-          subResultToShow = compareSubcheckpoints(
-            null,
-            itemData.testItem.Undersjekkpunkter,
-          );
-        } else if (itemData.differences) {
-          const undersjekkDiff = itemData.differences.find(
-            (d) => d.field === "Undersjekkpunkter" && d.subResult,
-          );
-          if (undersjekkDiff) subResultToShow = undersjekkDiff.subResult;
-        }
-
+        // Subcheckpoints section (recursively renders nested levels)
+        const subResultToShow = getSubResultToShow(itemData);
         if (
           subResultToShow &&
           Object.keys(subResultToShow.subItems).length > 0
@@ -1799,6 +1784,35 @@
         }
 
         return itemElement;
+      }
+
+      // Resolve the subcheckpoint comparison to render under an item or a
+      // sub-item: the array present on one side (prod/test only), or the
+      // deep-compared subResult attached to an Undersjekkpunkter difference.
+      function getSubResultToShow(data) {
+        if (
+          data.status === "prodOnly" &&
+          data.prodItem &&
+          Array.isArray(data.prodItem.Undersjekkpunkter) &&
+          data.prodItem.Undersjekkpunkter.length > 0
+        ) {
+          return compareSubcheckpoints(data.prodItem.Undersjekkpunkter, null);
+        }
+        if (
+          data.status === "testOnly" &&
+          data.testItem &&
+          Array.isArray(data.testItem.Undersjekkpunkter) &&
+          data.testItem.Undersjekkpunkter.length > 0
+        ) {
+          return compareSubcheckpoints(null, data.testItem.Undersjekkpunkter);
+        }
+        if (data.differences) {
+          const undersjekkDiff = data.differences.find(
+            (d) => d.field === "Undersjekkpunkter" && d.subResult,
+          );
+          if (undersjekkDiff) return undersjekkDiff.subResult;
+        }
+        return null;
       }
 
       function createSubcheckpointsSection(subResult) {
@@ -1933,6 +1947,15 @@
         details.appendChild(testCol);
         row.appendChild(details);
 
+        // Recurse into deeper levels of Undersjekkpunkter (e.g. 1.12 → 1.82 → 1.14).
+        const nestedSubResult = getSubResultToShow(subItemData);
+        if (
+          nestedSubResult &&
+          Object.keys(nestedSubResult.subItems).length > 0
+        ) {
+          row.appendChild(createSubcheckpointsSection(nestedSubResult));
+        }
+
         return row;
       }
 
@@ -2030,27 +2053,62 @@
           let summaryProd = null;
           let summaryTest = null;
           if (diff.type === "different") {
-            const idDiff = diffUndersjekkpunkterIds(
-              diff.prodValue,
-              diff.testValue,
-            );
-            if (idDiff.onlyInProd.length || idDiff.onlyInTest.length) {
-              const parts = [];
-              if (idDiff.onlyInProd.length)
-                parts.push(
-                  `<strong>${idDiff.onlyInProd.length}</strong> mangler i ${rightLabel()}`,
-                );
-              if (idDiff.onlyInTest.length)
-                parts.push(
-                  `<strong>${idDiff.onlyInTest.length}</strong> avvik i ${rightLabel()}`,
-                );
+            // Drive the panel from the already-computed subcheckpoint diff so
+            // that matched-but-changed sub-items are surfaced, not just
+            // presence differences.
+            const subItems = (diff.subResult && diff.subResult.subItems) || {};
+            const stats = (diff.subResult && diff.subResult.stats) || {
+              prodOnly: 0,
+              testOnly: 0,
+              different: 0,
+            };
+
+            // Render one side's ID list, colouring each sub-checkpoint by its
+            // comparison status (only-left, only-right, changed, identical).
+            const renderSide = (arr, side) => {
+              const ids = Array.isArray(arr)
+                ? arr
+                    .map((x) => x && x.Id)
+                    .filter((id) => id !== undefined && id !== null)
+                : [];
+              const label = `<strong>${ids.length} undersjekkpunkt${ids.length !== 1 ? "er" : ""}:</strong><br>`;
+              if (!ids.length) return label + "<em>Ingen</em>";
+              const rendered = ids
+                .map((id) => {
+                  const status = subItems[id] && subItems[id].status;
+                  const esc = escapeHtml(id);
+                  if (status === "different")
+                    return `<span class="diff-changed">${esc}</span>`;
+                  if (side === "prod" && status === "prodOnly")
+                    return `<span class="diff-prod-only">${esc}</span>`;
+                  if (side === "test" && status === "testOnly")
+                    return `<span class="diff-test-only">${esc}</span>`;
+                  return esc;
+                })
+                .join(", ");
+              return label + rendered;
+            };
+
+            const parts = [];
+            if (stats.prodOnly)
+              parts.push(
+                `<strong>${stats.prodOnly}</strong> mangler i ${rightLabel()}`,
+              );
+            if (stats.testOnly)
+              parts.push(
+                `<strong>${stats.testOnly}</strong> finnes bare i ${rightLabel()}`,
+              );
+            if (stats.different)
+              parts.push(`<strong>${stats.different}</strong> endret`);
+            if (parts.length) {
               summaryProd = document.createElement("div");
               summaryProd.className = "diff-summary";
               summaryProd.innerHTML = `Avvik fra ${leftLabel()}: ${parts.join(", ")}`;
               summaryTest = summaryProd.cloneNode(true);
             }
-            prodValue.innerHTML = idDiff.prodHtml;
-            testValue.innerHTML = idDiff.testHtml;
+
+            prodValue.innerHTML = renderSide(diff.prodValue, "prod");
+            testValue.innerHTML = renderSide(diff.testValue, "test");
           } else {
             prodValue.innerHTML = formatUndersjekkpunkter(diff.prodValue);
             testValue.innerHTML = formatUndersjekkpunkter(diff.testValue);
@@ -2201,44 +2259,6 @@
         return { prodHtml, testHtml, missingInTest, deviatesFromProd };
       }
 
-      function diffUndersjekkpunkterIds(prodValue, testValue) {
-        const prodIds = Array.isArray(prodValue)
-          ? prodValue.map((x) => x && x.Id).filter((x) => x !== undefined)
-          : [];
-        const testIds = Array.isArray(testValue)
-          ? testValue.map((x) => x && x.Id).filter((x) => x !== undefined)
-          : [];
-        const prodSet = new Set(prodIds);
-        const testSet = new Set(testIds);
-        const onlyInProd = prodIds.filter((id) => !testSet.has(id));
-        const onlyInTest = testIds.filter((id) => !prodSet.has(id));
-
-        const renderProd = prodIds
-          .map((id) =>
-            testSet.has(id)
-              ? escapeHtml(id)
-              : `<span class="diff-prod-only">${escapeHtml(id)}</span>`,
-          )
-          .join(", ");
-        const renderTest = testIds
-          .map((id) =>
-            prodSet.has(id)
-              ? escapeHtml(id)
-              : `<span class="diff-test-only">${escapeHtml(id)}</span>`,
-          )
-          .join(", ");
-
-        const prodLabel = `<strong>${prodIds.length} undersjekkpunkt${prodIds.length !== 1 ? "er" : ""}:</strong><br>`;
-        const testLabel = `<strong>${testIds.length} undersjekkpunkt${testIds.length !== 1 ? "er" : ""}:</strong><br>`;
-
-        return {
-          prodHtml: prodLabel + (renderProd || "<em>Ingen</em>"),
-          testHtml: testLabel + (renderTest || "<em>Ingen</em>"),
-          onlyInProd,
-          onlyInTest,
-        };
-      }
-
       function formatUndersjekkpunkter(value) {
         if (value === undefined) return "(mangler)";
         if (value === null) return "(null)";
@@ -2355,10 +2375,25 @@
                   const subId = (sub.dataset.id || "").toLowerCase();
                   if (subId === searchFilter) {
                     anySubMatches = true;
-                    const sh = sub.querySelector(".subcheckpoint-header");
-                    const sd = sub.querySelector(".subcheckpoint-details");
-                    if (sh) sh.classList.add("expanded");
-                    if (sd) sd.classList.add("expanded");
+                    // Expand the match and every ancestor subcheckpoint row so a
+                    // deeply nested hit is actually revealed.
+                    let node = sub;
+                    while (
+                      node &&
+                      node.classList.contains("subcheckpoint-row")
+                    ) {
+                      const sh = node.querySelector(
+                        ":scope > .subcheckpoint-header",
+                      );
+                      const sd = node.querySelector(
+                        ":scope > .subcheckpoint-details",
+                      );
+                      if (sh) sh.classList.add("expanded");
+                      if (sd) sd.classList.add("expanded");
+                      node = node.parentElement
+                        ? node.parentElement.closest(".subcheckpoint-row")
+                        : null;
+                    }
                   }
                 });
                 if (anySubMatches && !mainMatches) {

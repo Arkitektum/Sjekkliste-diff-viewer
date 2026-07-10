@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '/<script>/{f=1;next} /<\\\\/script>/{f=0} f' sjekkliste-diff-viewer.html)",
+      "Bash(node --check /tmp/sjekk.js)"
+    ]
+  }
+}
