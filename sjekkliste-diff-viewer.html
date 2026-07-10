@@ -1275,8 +1275,9 @@
         const differences = [];
         let identical = true;
 
-        // Fields to ignore in comparison (timestamps, etc.)
+        // Fields to ignore in comparison (timestamps, per-env keys, etc.)
         const fieldsToIgnore = [
+          "SjekkId",
           "Oppdatert",
           "Updated",
           "LastModified",
