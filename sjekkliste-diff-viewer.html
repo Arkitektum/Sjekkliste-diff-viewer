@@ -283,6 +283,58 @@
         display: block;
       }
 
+      /* Tema sub-group (a subgroup of Prosesskategori). */
+      .theme-group {
+        border-top: 1px solid var(--grey-200);
+      }
+
+      .theme-group:first-child {
+        border-top: none;
+      }
+
+      .theme-header {
+        background: var(--grey-100);
+        color: var(--grey-800);
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid var(--secondary);
+        transition: background-color 0.2s;
+      }
+
+      .theme-header:hover {
+        background: var(--grey-200);
+      }
+
+      .theme-stats {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: normal;
+      }
+
+      .theme-header .theme-expand-icon {
+        transition: transform 0.3s;
+        font-size: 11px;
+        margin-left: 10px;
+      }
+
+      .theme-header.expanded .theme-expand-icon {
+        transform: rotate(90deg);
+      }
+
+      .theme-content {
+        display: none;
+      }
+
+      .theme-content.expanded {
+        display: block;
+      }
+
       .item-row {
         padding: 0;
         border-bottom: 1px solid var(--grey-200);
@@ -1621,19 +1673,86 @@
         const content = document.createElement("div");
         content.className = "category-content";
 
-        // Sort items by ID
-        const sortedIds = Object.keys(categoryData.items).sort();
-
-        sortedIds.forEach((id) => {
+        // Sub-group the category's items by Tema (Tema is a subgroup of
+        // Prosesskategori). Tema is read from either compared side.
+        const byTheme = {};
+        Object.keys(categoryData.items).forEach((id) => {
           const itemData = categoryData.items[id];
-          const itemElement = createItemElement(itemData);
-          content.appendChild(itemElement);
+          const tema =
+            (itemData.prodItem && itemData.prodItem.Tema) ||
+            (itemData.testItem && itemData.testItem.Tema) ||
+            "Ukjent";
+          (byTheme[tema] = byTheme[tema] || []).push(itemData);
         });
+
+        Object.keys(byTheme)
+          .sort()
+          .forEach((tema) => {
+            content.appendChild(createThemeElement(tema, byTheme[tema]));
+          });
 
         categoryElement.appendChild(header);
         categoryElement.appendChild(content);
 
         return categoryElement;
+      }
+
+      function createThemeElement(tema, themeItems) {
+        const themeGroup = document.createElement("div");
+        themeGroup.className = "theme-group";
+        themeGroup.dataset.theme = tema;
+
+        const stats = { identical: 0, different: 0, prodOnly: 0, testOnly: 0 };
+        themeItems.forEach((it) => stats[it.status]++);
+
+        // Expanded by default so item headers are visible when the parent
+        // category is opened; the header can collapse just this theme.
+        const header = document.createElement("div");
+        header.className = "theme-header expanded";
+
+        const left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.alignItems = "center";
+        left.style.gap = "12px";
+        left.innerHTML = `
+                <span>${tema}</span>
+                <span class="theme-stats">
+                    <span class="stat-badge">${themeItems.length} elementer</span>
+                    ${stats.identical > 0 ? `<span class="stat-badge" style="background: #27ae60;">✓ ${stats.identical}</span>` : ""}
+                    ${stats.different > 0 ? `<span class="stat-badge has-issues" style="background: var(--error);">⚠ ${stats.different}</span>` : ""}
+                    ${stats.prodOnly > 0 ? `<span class="stat-badge has-issues" style="background: var(--warning);">📤 ${stats.prodOnly}</span>` : ""}
+                    ${stats.testOnly > 0 ? `<span class="stat-badge has-issues" style="background: #8b5cf6;">📥 ${stats.testOnly}</span>` : ""}
+                </span>
+            `;
+
+        const icon = document.createElement("span");
+        icon.className = "theme-expand-icon";
+        icon.textContent = "▶";
+
+        header.appendChild(left);
+        header.appendChild(icon);
+
+        const themeContent = document.createElement("div");
+        themeContent.className = "theme-content expanded";
+
+        header.addEventListener("click", (e) => {
+          e.preventDefault();
+          themeContent.classList.toggle("expanded");
+          header.classList.toggle("expanded");
+        });
+
+        themeItems
+          .slice()
+          .sort((a, b) =>
+            String(a.id).localeCompare(String(b.id), undefined, {
+              numeric: true,
+            }),
+          )
+          .forEach((it) => themeContent.appendChild(createItemElement(it)));
+
+        themeGroup.appendChild(header);
+        themeGroup.appendChild(themeContent);
+        return themeGroup;
       }
 
       function createItemElement(itemData) {
@@ -2282,6 +2401,13 @@
           content.classList[method]("expanded");
           header.classList[method]("expanded");
 
+          category
+            .querySelectorAll(".theme-content")
+            .forEach((c) => c.classList[method]("expanded"));
+          category
+            .querySelectorAll(".theme-header")
+            .forEach((h) => h.classList[method]("expanded"));
+
           const items = category.querySelectorAll(".item-row");
           items.forEach((item) => {
             item.querySelector(".item-details").classList[method]("expanded");
@@ -2405,6 +2531,21 @@
               }
             });
 
+            // Hide Tema sub-groups with no visible items; reveal a theme when
+            // a search match lands inside it.
+            categoryElement.querySelectorAll(".theme-group").forEach((tg) => {
+              const anyVisible = Array.from(
+                tg.querySelectorAll(".item-row"),
+              ).some((it) => it.style.display !== "none");
+              tg.style.display = anyVisible ? "block" : "none";
+              if (anyVisible && searchFilter) {
+                const tc = tg.querySelector(".theme-content");
+                const th = tg.querySelector(".theme-header");
+                if (tc) tc.classList.add("expanded");
+                if (th) th.classList.add("expanded");
+              }
+            });
+
             // Update category header with visible count
             const leftSide = categoryElement.querySelector(
               ".category-header > div",
@@ -2442,6 +2583,15 @@
 
         // Update expand mode visual state
         updateExpandModeVisualState();
+
+        // Keep Tema sub-groups open so item headers stay visible; the expand
+        // mode only controls item/subcheckpoint detail visibility.
+        document
+          .querySelectorAll(".theme-content")
+          .forEach((c) => c.classList.add("expanded"));
+        document
+          .querySelectorAll(".theme-header")
+          .forEach((h) => h.classList.add("expanded"));
 
         allItems.forEach((item) => {
           const details = item.querySelector(".item-details");
