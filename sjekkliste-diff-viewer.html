@@ -767,6 +767,42 @@
       <h1>DIBK Sjekkliste API Forskjellsvisning</h1>
 
       <div class="controls">
+        <div
+          class="env-selector"
+          style="
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+          "
+        >
+          <div class="filter-group" id="leftEnvGroup" style="margin: 0">
+            <label for="leftEnv">Sammenlign (fasit):</label>
+            <select id="leftEnv">
+              <option value="prod" selected>Prod</option>
+              <option value="test">Test</option>
+              <option value="dev">Dev</option>
+            </select>
+          </div>
+          <span style="padding-bottom: 10px; font-weight: 600; color: var(--primary-dark)"
+            >mot</span
+          >
+          <div class="filter-group" id="rightEnvGroup" style="margin: 0">
+            <label for="rightEnv">Miljø:</label>
+            <select id="rightEnv">
+              <option value="prod">Prod</option>
+              <option value="test" selected>Test</option>
+              <option value="dev">Dev</option>
+            </select>
+          </div>
+        </div>
+
         <div class="button-group">
           <button id="loadData">Last inn data</button>
           <button id="expandAll" disabled>Utvid alle</button>
@@ -848,8 +884,12 @@
               </option>
               <option value="different">Kun forskjellige verdier</option>
               <option value="identical">Kun identiske</option>
-              <option value="prodOnly">Kun finnes i prod</option>
-              <option value="testOnly">Kun finnes i test</option>
+              <option value="prodOnly" id="statusOptProdOnly">
+                Kun finnes i prod
+              </option>
+              <option value="testOnly" id="statusOptTestOnly">
+                Kun finnes i test
+              </option>
             </select>
           </div>
 
@@ -898,7 +938,7 @@
                 border: 1px solid rgba(247, 168, 0, 0.3);
               "
             ></div>
-            <span>Mangler i test</span>
+            <span id="legendMissing">Mangler i test</span>
           </div>
           <div class="legend-item">
             <div
@@ -908,7 +948,7 @@
                 border: 1px solid rgba(139, 92, 246, 0.3);
               "
             ></div>
-            <span>Finnes bare i test</span>
+            <span id="legendExtra">Finnes bare i test</span>
           </div>
         </div>
       </div>
@@ -932,11 +972,11 @@
           </div>
           <div class="stat-card stat-prod-only">
             <h3 id="prodOnlyCount">0</h3>
-            <p>Kun i prod</p>
+            <p id="prodOnlyLabel">Kun i prod</p>
           </div>
           <div class="stat-card stat-test-only">
             <h3 id="testOnlyCount">0</h3>
-            <p>Kun i test</p>
+            <p id="testOnlyLabel">Kun i test</p>
           </div>
         </div>
       </div>
@@ -945,9 +985,29 @@
     </div>
 
     <script>
-      const PROD_URL = "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste";
-      const TEST_URL =
-        "https://sjekkliste-bygg-api.ft-test.dibk.no/api/sjekkliste";
+      // Available environments. The "left" environment acts as the source of
+      // truth (fasit); the "right" environment is compared against it.
+      const ENVIRONMENTS = {
+        prod: {
+          label: "Prod",
+          url: "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste",
+        },
+        test: {
+          label: "Test",
+          url: "https://sjekkliste-bygg-api.ft-test.dibk.no/api/sjekkliste",
+        },
+        dev: {
+          label: "Dev",
+          url: "https://sjekkliste-bygg-api.ft-dev.dibk.no/api/sjekkliste",
+        },
+      };
+
+      // Currently selected environments (left = source of truth, right = compared).
+      let leftEnv = "prod";
+      let rightEnv = "test";
+
+      const leftLabel = () => ENVIRONMENTS[leftEnv].label;
+      const rightLabel = () => ENVIRONMENTS[rightEnv].label;
 
       let prodData = null;
       let testData = null;
@@ -980,29 +1040,72 @@
         .getElementById("expandModeFilter")
         .addEventListener("change", applyExpandMode);
       document
-        .getElementById("expandModeFilter")
-        .addEventListener("change", applyExpandMode);
+        .getElementById("leftEnv")
+        .addEventListener("change", () => onEnvChange("leftEnv"));
+      document
+        .getElementById("rightEnv")
+        .addEventListener("change", () => onEnvChange("rightEnv"));
+
+      // Keep the two environment selectors from pointing at the same environment.
+      function onEnvChange(changedId) {
+        const left = document.getElementById("leftEnv");
+        const right = document.getElementById("rightEnv");
+
+        if (left.value === right.value) {
+          const other = changedId === "leftEnv" ? right : left;
+          const keepValue = changedId === "leftEnv" ? left.value : right.value;
+          other.value = Object.keys(ENVIRONMENTS).find((k) => k !== keepValue);
+        }
+
+        leftEnv = left.value;
+        rightEnv = right.value;
+        updateEnvLabels();
+      }
+
+      // Update every user-facing label that references an environment.
+      function updateEnvLabels() {
+        document.getElementById("prodOnlyLabel").textContent =
+          `Kun i ${leftLabel()}`;
+        document.getElementById("testOnlyLabel").textContent =
+          `Kun i ${rightLabel()}`;
+        document.getElementById("legendMissing").textContent =
+          `Mangler i ${rightLabel()}`;
+        document.getElementById("legendExtra").textContent =
+          `Finnes bare i ${rightLabel()}`;
+        document.getElementById("statusOptProdOnly").textContent =
+          `Kun finnes i ${leftLabel()}`;
+        document.getElementById("statusOptTestOnly").textContent =
+          `Kun finnes i ${rightLabel()}`;
+      }
+
+      updateEnvLabels();
 
       async function loadData() {
         const loading = document.getElementById("loading");
         const error = document.getElementById("error");
         const loadButton = document.getElementById("loadData");
 
+        // Read the current environment selection.
+        leftEnv = document.getElementById("leftEnv").value;
+        rightEnv = document.getElementById("rightEnv").value;
+        updateEnvLabels();
+
+        loading.textContent = `Laster data fra ${leftLabel()} og ${rightLabel()}...`;
         loading.style.display = "block";
         error.style.display = "none";
         loadButton.disabled = true;
 
         try {
-          // Load data from both endpoints
+          // Load data from both selected endpoints
           const [prodResponse, testResponse] = await Promise.all([
-            fetch(PROD_URL, {
+            fetch(ENVIRONMENTS[leftEnv].url, {
               method: "GET",
               mode: "cors",
               headers: {
                 Accept: "application/json",
               },
             }),
-            fetch(TEST_URL, {
+            fetch(ENVIRONMENTS[rightEnv].url, {
               method: "GET",
               mode: "cors",
               headers: {
@@ -1013,12 +1116,12 @@
 
           if (!prodResponse.ok) {
             throw new Error(
-              `Prod API feil: ${prodResponse.status} ${prodResponse.statusText}`,
+              `${leftLabel()} API feil: ${prodResponse.status} ${prodResponse.statusText}`,
             );
           }
           if (!testResponse.ok) {
             throw new Error(
-              `Test API feil: ${testResponse.status} ${testResponse.statusText}`,
+              `${rightLabel()} API feil: ${testResponse.status} ${testResponse.statusText}`,
             );
           }
 
@@ -1473,8 +1576,8 @@
                     <span class="stat-badge">${totalItems} elementer</span>
                     ${stats.identical > 0 ? `<span class="stat-badge" style="background: #27ae60;">✓ ${stats.identical} identiske</span>` : ""}
                     ${stats.different > 0 ? `<span class="stat-badge has-issues" style="background: #e74c3c;">⚠ ${stats.different} forskjellige</span>` : ""}
-                    ${stats.prodOnly > 0 ? `<span class="stat-badge has-issues" style="background: #f39c12;">📤 ${stats.prodOnly} kun i prod</span>` : ""}
-                    ${stats.testOnly > 0 ? `<span class="stat-badge has-issues" style="background: #9b59b6;">📥 ${stats.testOnly} kun i test</span>` : ""}
+                    ${stats.prodOnly > 0 ? `<span class="stat-badge has-issues" style="background: #f39c12;">📤 ${stats.prodOnly} kun i ${leftLabel()}</span>` : ""}
+                    ${stats.testOnly > 0 ? `<span class="stat-badge has-issues" style="background: #9b59b6;">📥 ${stats.testOnly} kun i ${rightLabel()}</span>` : ""}
                 </div>
             `;
 
@@ -1596,10 +1699,10 @@
             statusBadge.textContent = `⚠ ${diffCount} forskjeller`;
             break;
           case "prodOnly":
-            statusBadge.textContent = "📤 Kun i Prod";
+            statusBadge.textContent = `📤 Kun i ${leftLabel()}`;
             break;
           case "testOnly":
-            statusBadge.textContent = "📥 Kun i Test";
+            statusBadge.textContent = `📥 Kun i ${rightLabel()}`;
             break;
         }
 
@@ -1634,8 +1737,8 @@
         const testColumn = document.createElement("div");
         testColumn.className = "env-column env-test";
 
-        prodColumn.innerHTML = `<div class="env-title">Prod</div>`;
-        testColumn.innerHTML = `<div class="env-title">Test</div>`;
+        prodColumn.innerHTML = `<div class="env-title">${leftLabel()}</div>`;
+        testColumn.innerHTML = `<div class="env-title">${rightLabel()}</div>`;
 
         if (itemData.status === "prodOnly") {
           prodColumn.appendChild(createItemDetails(itemData.prodItem));
@@ -1776,10 +1879,10 @@
             statusBadge.textContent = `⚠ ${diffCount} forskjeller`;
             break;
           case "prodOnly":
-            statusBadge.textContent = "📤 Kun i Prod";
+            statusBadge.textContent = `📤 Kun i ${leftLabel()}`;
             break;
           case "testOnly":
-            statusBadge.textContent = "📥 Kun i Test";
+            statusBadge.textContent = `📥 Kun i ${rightLabel()}`;
             break;
         }
 
@@ -1806,8 +1909,8 @@
         const testCol = document.createElement("div");
         testCol.className = "env-column env-test";
 
-        prodCol.innerHTML = `<div class="env-title">Prod</div>`;
-        testCol.innerHTML = `<div class="env-title">Test</div>`;
+        prodCol.innerHTML = `<div class="env-title">${leftLabel()}</div>`;
+        testCol.innerHTML = `<div class="env-title">${rightLabel()}</div>`;
 
         if (subItemData.status === "prodOnly") {
           prodCol.appendChild(createItemDetails(subItemData.prodItem));
@@ -1934,15 +2037,15 @@
               const parts = [];
               if (idDiff.onlyInProd.length)
                 parts.push(
-                  `<strong>${idDiff.onlyInProd.length}</strong> mangler i test`,
+                  `<strong>${idDiff.onlyInProd.length}</strong> mangler i ${rightLabel()}`,
                 );
               if (idDiff.onlyInTest.length)
                 parts.push(
-                  `<strong>${idDiff.onlyInTest.length}</strong> avvik i test`,
+                  `<strong>${idDiff.onlyInTest.length}</strong> avvik i ${rightLabel()}`,
                 );
               summaryProd = document.createElement("div");
               summaryProd.className = "diff-summary";
-              summaryProd.innerHTML = `Avvik fra prod: ${parts.join(", ")}`;
+              summaryProd.innerHTML = `Avvik fra ${leftLabel()}: ${parts.join(", ")}`;
               summaryTest = summaryProd.cloneNode(true);
             }
             prodValue.innerHTML = idDiff.prodHtml;
@@ -1987,7 +2090,7 @@
 
           summaryProd = document.createElement("div");
           summaryProd.className = "diff-summary";
-          summaryProd.innerHTML = `Avvik fra prod: <strong>${inline.missingInTest}</strong> mangler i test, <strong>${inline.deviatesFromProd}</strong> avvik i test`;
+          summaryProd.innerHTML = `Avvik fra ${leftLabel()}: <strong>${inline.missingInTest}</strong> mangler i ${rightLabel()}, <strong>${inline.deviatesFromProd}</strong> avvik i ${rightLabel()}`;
           summaryTest = summaryProd.cloneNode(true);
         } else {
           prodValue.textContent = formatValue(diff.prodValue);
