@@ -917,6 +917,27 @@
           </h4>
           <div
             class="filter-group"
+            id="groupByTemaGroup"
+            style="margin: 0 0 12px 0"
+          >
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+              "
+            >
+              <input
+                type="checkbox"
+                id="groupByTemaToggle"
+                style="width: auto"
+              />
+              Grupper etter tema
+            </label>
+          </div>
+          <div
+            class="filter-group"
             id="expandModeFilterGroup"
             style="margin: 0"
           >
@@ -1079,6 +1100,9 @@
       let testData = null;
       let comparisonData = null;
 
+      // Whether to sub-group each category's items by Tema.
+      let groupByTema = false;
+
       // Event listeners
       document.getElementById("loadData").addEventListener("click", loadData);
       document
@@ -1105,6 +1129,9 @@
       document
         .getElementById("expandModeFilter")
         .addEventListener("change", applyExpandMode);
+      document
+        .getElementById("groupByTemaToggle")
+        .addEventListener("change", onGroupByTemaChange);
       document
         .getElementById("leftEnv")
         .addEventListener("change", () => onEnvChange("leftEnv"));
@@ -1216,6 +1243,27 @@
           loading.style.display = "none";
           loadButton.disabled = false;
         }
+      }
+
+      // Re-render the category list when the Tema-grouping toggle changes,
+      // preserving the active filters and expand mode.
+      function onGroupByTemaChange() {
+        groupByTema = document.getElementById("groupByTemaToggle").checked;
+        if (!comparisonData) return;
+        const resultsContainer = document.getElementById("results");
+        resultsContainer.innerHTML = "";
+        Object.keys(comparisonData.categories)
+          .sort()
+          .forEach((category) => {
+            resultsContainer.appendChild(
+              createCategoryElement(
+                category,
+                comparisonData.categories[category],
+              ),
+            );
+          });
+        applyExpandMode();
+        applyFilters();
       }
 
       function compareData(prodData, testData) {
@@ -1673,23 +1721,34 @@
         const content = document.createElement("div");
         content.className = "category-content";
 
-        // Sub-group the category's items by Tema (Tema is a subgroup of
-        // Prosesskategori). Tema is read from either compared side.
-        const byTheme = {};
-        Object.keys(categoryData.items).forEach((id) => {
-          const itemData = categoryData.items[id];
-          const tema =
-            (itemData.prodItem && itemData.prodItem.Tema) ||
-            (itemData.testItem && itemData.testItem.Tema) ||
-            "Ukjent";
-          (byTheme[tema] = byTheme[tema] || []).push(itemData);
-        });
-
-        Object.keys(byTheme)
-          .sort()
-          .forEach((tema) => {
-            content.appendChild(createThemeElement(tema, byTheme[tema]));
+        if (groupByTema) {
+          // Sub-group the category's items by Tema (Tema is a subgroup of
+          // Prosesskategori). Tema is read from either compared side.
+          const byTheme = {};
+          Object.keys(categoryData.items).forEach((id) => {
+            const itemData = categoryData.items[id];
+            const tema =
+              (itemData.prodItem && itemData.prodItem.Tema) ||
+              (itemData.testItem && itemData.testItem.Tema) ||
+              "Ukjent";
+            (byTheme[tema] = byTheme[tema] || []).push(itemData);
           });
+
+          Object.keys(byTheme)
+            .sort()
+            .forEach((tema) => {
+              content.appendChild(createThemeElement(tema, byTheme[tema]));
+            });
+        } else {
+          // Flat: items directly under the category, sorted by Id.
+          Object.keys(categoryData.items)
+            .sort((a, b) =>
+              String(a).localeCompare(String(b), undefined, { numeric: true }),
+            )
+            .forEach((id) => {
+              content.appendChild(createItemElement(categoryData.items[id]));
+            });
+        }
 
         categoryElement.appendChild(header);
         categoryElement.appendChild(content);
