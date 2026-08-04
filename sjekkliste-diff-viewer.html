@@ -2112,6 +2112,10 @@
           "Updated",
           "LastModified",
           "Timestamp",
+          // Sorteringsnummer. Rekkefølgen kan avvike mellom miljøene uten at det
+          // er et innholdsavvik, og gir ellers utslag på hvert punkt som er
+          // flyttet eller lagt til på en annen plass.
+          "Rekkefolge",
         ];
 
         // Get all unique keys, excluding fields to ignore
@@ -2369,7 +2373,6 @@
         } else if (item.status === "prodOnly") cls = "missing";
         else if (item.status === "testOnly") cls = "dev-only";
         else {
-          let anyDiff = false;
           (item.differences || []).forEach((diff) => {
             if (diff.type === "same") return;
             const field = diff.field;
@@ -2381,12 +2384,9 @@
               if (st) {
                 bump(field, "missing", st.prodOnly);
                 bump(field, "extra", st.testOnly);
-                if (st.prodOnly || st.testOnly || st.different) anyDiff = true;
                 return;
               }
             }
-
-            anyDiff = true;
 
             if (diff.type === "missing_in_test") {
               bump(field, "missing", 1);
@@ -2415,14 +2415,18 @@
             }
           });
 
+          // Klassen følger av hva som faktisk ble registrert, ikke av at noe var
+          // ulikt. Ellers ville rene formaterings- eller rekkefølgeforskjeller
+          // havnet under «kun ekstra i dev» uten at noe er lagt til.
           const problems = Object.keys(kinds).filter(
             (f) => kinds[f].missing || kinds[f].changed,
           );
-          cls = !anyDiff
-            ? "identical"
-            : problems.length
-              ? "deviating"
-              : "extra-only";
+          const extras = Object.keys(kinds).filter((f) => kinds[f].extra);
+          cls = problems.length
+            ? "deviating"
+            : extras.length
+              ? "extra-only"
+              : "identical";
         }
 
         const result = {
@@ -3632,6 +3636,10 @@
             summaryProd.innerHTML = `Avvik fra ${leftLabel()}: ${parts.join(", ")}`;
           } else if (ld.orderOnly && !ld.added.length) {
             summaryProd.innerHTML = `<span class="diff-ok-note">Samme oppføringer, kun ulik rekkefølge</span>`;
+          } else if (ld.envKeyOnly) {
+            summaryProd.innerHTML = `<span class="diff-ok-note">Samme oppføringer – kun miljøspesifikke id-er skiller dem</span>`;
+          } else if (ld.formattingOnly) {
+            summaryProd.innerHTML = `<span class="diff-ok-note">Samme oppføringer – kun forskjell i mellomrom/formatering</span>`;
           } else {
             summaryProd.innerHTML = `<span class="diff-ok-note">Bare ekstra oppføringer i ${rightLabel()} – ingenting fra ${leftLabel()} mangler</span>`;
           }
@@ -3731,12 +3739,41 @@
         Utfall: (x) => x && `${x.Utfalltypekode}|${x.Utfallverdi}`,
       };
 
+      // Surrogatnøkler som hvert miljø tildeler selv. De sier ingenting om
+      // innholdet, så to oppføringer kan være like selv om disse er ulike.
+      // Feltlisten i compareItems dekker bare toppnivå; disse ligger nede i
+      // oppføringene og må lukes ut uansett hvor dypt de står.
+      const ENV_SPECIFIC_KEYS = new Set([
+        "MetadataId",
+        "SjekkId",
+        "Oppdatert",
+      ]);
+
+      // JSON uten miljøspesifikke nøkler, uten å røre tekstinnholdet. Brukes til
+      // å avgjøre om det bare er slike nøkler som skiller to oppføringer.
+      function jsonWithoutEnvKeys(v) {
+        if (v === null || typeof v !== "object") return JSON.stringify(v);
+        if (Array.isArray(v))
+          return `[${v.map(jsonWithoutEnvKeys).join(",")}]`;
+        return `{${Object.keys(v)
+          .sort()
+          .filter((k) => !ENV_SPECIFIC_KEYS.has(k))
+          .map((k) => `${JSON.stringify(k)}:${jsonWithoutEnvKeys(v[k])}`)
+          .join(",")}}`;
+      }
+
       // Nøkkelrekkefølge i objekter skal heller ikke gi falske avvik.
       function canonicalJson(v) {
+        // Tekst normaliseres på samme måte som i tekstdiffen: ulikt antall
+        // mellomrom er formatering, ikke innhold. Uten dette ble oppføringer
+        // som «Mangel» og «Mangel » meldt som endret enda de er like.
+        if (typeof v === "string")
+          return JSON.stringify(v.replace(/\s+/g, " ").trim());
         if (v === null || typeof v !== "object") return JSON.stringify(v);
         if (Array.isArray(v)) return `[${v.map(canonicalJson).join(",")}]`;
         return `{${Object.keys(v)
           .sort()
+          .filter((k) => !ENV_SPECIFIC_KEYS.has(k))
           .map((k) => `${JSON.stringify(k)}:${canonicalJson(v[k])}`)
           .join(",")}}`;
       }
@@ -3825,17 +3862,29 @@
         };
 
         // Ingen innholdsforskjell, men listene står i ulik rekkefølge.
+        const settled = !missing.length && !changed.length && !added.length;
         const orderOnly =
-          !missing.length &&
-          !changed.length &&
-          !added.length &&
-          keyOf(prodArr).join("|") !== keyOf(testArr).join("|");
+          settled && keyOf(prodArr).join("|") !== keyOf(testArr).join("|");
+        // Like oppføringer i samme rekkefølge. Da skiller det bare på
+        // miljøspesifikke id-er, eller på formatering som mellomrom.
+        const cosmetic =
+          settled &&
+          !orderOnly &&
+          JSON.stringify(prodArr) !== JSON.stringify(testArr);
+        // Er de like så snart de miljøtildelte nøklene fjernes? Da er det de,
+        // og ikke formateringen, som er forskjellen.
+        const envKeyOnly =
+          cosmetic &&
+          jsonWithoutEnvKeys(prodArr) === jsonWithoutEnvKeys(testArr);
+        const formattingOnly = cosmetic && !envKeyOnly;
 
         return {
           missing,
           changed,
           added,
           orderOnly,
+          envKeyOnly,
+          formattingOnly,
           prodHtml: render(prodArr, "prod"),
           testHtml: render(testArr, "test"),
           hasProblem: missing.length > 0 || changed.length > 0,
