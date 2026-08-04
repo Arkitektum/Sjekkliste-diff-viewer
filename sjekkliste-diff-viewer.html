@@ -185,6 +185,307 @@
         border: 2px solid;
       }
 
+      /* ---- Statistikkpanel -------------------------------------------------
+         Status-skalaen brukes gjennomgående og i samme rekkefølge (alvorlighet
+         stigende). Fargene er validert mot hvit flate: CVD-separasjon klarerer
+         terskelen, og gultonen ligger under 3:1 kontrast, som er kompensert med
+         synlige etiketter og en tabellvisning. */
+      :root {
+        --st-identical: #06a261;
+        --st-extra: #6366f1;
+        --st-changed: #cc8b00;
+        --st-missing: #e02e49;
+        --st-track: #e8edf3;
+      }
+
+      .stats-panel {
+        background: var(--white);
+        padding: 24px;
+        border-radius: var(--radius);
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--grey-200);
+      }
+
+      .stats-panel h2 {
+        margin-bottom: 4px;
+      }
+
+      .stats-sub {
+        color: var(--grey-500);
+        font-size: 13px;
+        margin-bottom: 20px;
+      }
+
+      .stats-top {
+        display: grid;
+        grid-template-columns: minmax(200px, 260px) 1fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      @media (max-width: 820px) {
+        .stats-top {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Hero-tallet – nøyaktig ett per visning. */
+      .stats-hero-value {
+        font-size: 52px;
+        font-weight: 700;
+        line-height: 1.05;
+        color: var(--primary);
+      }
+
+      .stats-hero-label {
+        font-size: 13px;
+        color: var(--grey-600);
+        margin-top: 2px;
+      }
+
+      /* Måler: fylt del bærer tilstanden, sporet er en lysere tone. */
+      .stats-meter {
+        height: 10px;
+        background: var(--st-track);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 12px;
+      }
+
+      .stats-meter > span {
+        display: block;
+        height: 100%;
+        background: var(--st-identical);
+        border-radius: 999px;
+      }
+
+      .stats-hero-note {
+        font-size: 12px;
+        color: var(--grey-500);
+        margin-top: 8px;
+      }
+
+      /* Andel-av-helhet: liggende stablet stolpe med 2px flatemellomrom. */
+      .stats-stack {
+        display: flex;
+        width: 100%;
+        height: 34px;
+        gap: 2px;
+        margin-bottom: 12px;
+      }
+
+      .stats-stack > div {
+        height: 100%;
+        min-width: 3px;
+      }
+
+      .stats-stack > div:first-child {
+        border-radius: 4px 0 0 4px;
+      }
+
+      .stats-stack > div:last-child {
+        border-radius: 0 4px 4px 0;
+      }
+
+      .stats-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+      }
+
+      .stats-legend-item {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        font-size: 13px;
+      }
+
+      .stats-swatch {
+        width: 11px;
+        height: 11px;
+        border-radius: 3px;
+        flex: none;
+        transform: translateY(1px);
+      }
+
+      .stats-legend-count {
+        font-weight: 700;
+        color: var(--grey-800);
+      }
+
+      .stats-legend-label {
+        color: var(--grey-600);
+      }
+
+      .stats-legend-pct {
+        color: var(--grey-400);
+        font-size: 12px;
+      }
+
+      .stats-section {
+        margin-top: 28px;
+      }
+
+      .stats-section h3 {
+        font-size: 14px;
+        color: var(--grey-700);
+        margin-bottom: 4px;
+      }
+
+      .stats-section-note {
+        font-size: 12px;
+        color: var(--grey-500);
+        margin-bottom: 12px;
+      }
+
+      /* Tabell + stolper: over ~7 klasser leses dette bedre som tabell. */
+      .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .stats-table th {
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--grey-500);
+        font-weight: 600;
+        padding: 0 10px 6px 0;
+        border-bottom: 1px solid var(--grey-200);
+      }
+
+      .stats-table th.num,
+      .stats-table td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        width: 62px;
+      }
+
+      .stats-table td {
+        padding: 5px 10px 5px 0;
+        border-bottom: 1px solid var(--grey-100);
+        color: var(--grey-700);
+      }
+
+      .stats-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .stats-table td.field {
+        font-weight: 600;
+        color: var(--grey-800);
+        white-space: nowrap;
+      }
+
+      .stats-bar {
+        display: flex;
+        gap: 2px;
+        height: 12px;
+        min-width: 90px;
+      }
+
+      .stats-bar > div {
+        height: 100%;
+        border-radius: 2px;
+        min-width: 2px;
+      }
+
+      .stats-zero {
+        color: var(--grey-300);
+      }
+
+      .stats-empty {
+        color: var(--grey-500);
+        font-size: 13px;
+        padding: 8px 0;
+      }
+
+      /* ---- Klikkbar statistikk --------------------------------------------- */
+      .stats-clickable {
+        cursor: pointer;
+        border: none;
+        background: none;
+        padding: 2px 4px;
+        margin: -2px -4px;
+        border-radius: var(--radius-sm);
+        font: inherit;
+        color: inherit;
+        text-align: inherit;
+      }
+
+      .stats-clickable:hover {
+        background: var(--primary-light);
+      }
+
+      .stats-clickable:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+      }
+
+      .stats-table tr.stats-clickable-row:hover {
+        background: var(--primary-light);
+      }
+
+      .stats-table td.num.stats-clickable {
+        margin: 0;
+      }
+
+      .stats-stack > div.stats-clickable {
+        margin: 0;
+        padding: 0;
+      }
+
+      .stats-hint {
+        font-size: 12px;
+        color: var(--grey-500);
+        margin-top: 14px;
+        font-style: italic;
+      }
+
+      /* Raden som traff drill-down – løftes fram uten å skjule statusfargen. */
+      .item-row.drill-hit > .item-header,
+      .subcheckpoint-row.drill-hit > .subcheckpoint-header {
+        box-shadow: inset 3px 0 0 var(--primary);
+      }
+
+      /* Feltet man drillet inn på. */
+      .field-hit {
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+      }
+
+      /* Banner over resultatlisten når en drill-down er aktiv. */
+      .drill-banner {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: var(--primary-light);
+        border: 1px solid var(--primary);
+        border-radius: var(--radius);
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        color: var(--primary-dark);
+      }
+
+      .drill-banner.visible {
+        display: flex;
+      }
+
+      .drill-banner strong {
+        color: var(--primary-dark);
+      }
+
+      .drill-banner button {
+        padding: 7px 14px;
+        font-size: 13px;
+      }
+
       .stat-identical {
         border-color: var(--success);
         background: linear-gradient(
@@ -489,6 +790,13 @@
         border-left: 3px solid #6c5ce7;
       }
 
+      /* A field where the only difference is that the right-hand environment has
+         extra content. Expected by design, so it must not read as an error. */
+      .field-dev-extra {
+        background: #eef2ff;
+        border-left: 3px solid #6366f1;
+      }
+
       .field-name {
         font-weight: bold;
         color: #2d3436;
@@ -513,7 +821,7 @@
         box-shadow: inset 0 -2px 0 #f7a800;
       }
 
-      /* On the test side: tokens that deviate from prod. */
+      /* On the test side: tokens that replace something prod had — a real change. */
       .diff-test-only {
         background: #f8b4b4;
         color: #7a1f1f;
@@ -521,6 +829,18 @@
         border-radius: 2px;
         font-weight: 600;
         box-shadow: inset 0 -2px 0 #e02e49;
+      }
+
+      /* On the test side: tokens that are purely added, with nothing removed in
+         return. Extra content in the compared environment is expected, so this is
+         informational rather than an error. */
+      .diff-test-added {
+        background: #e0e7ff;
+        color: #3730a3;
+        padding: 1px 2px;
+        border-radius: 2px;
+        font-weight: 600;
+        box-shadow: inset 0 -2px 0 #6366f1;
       }
 
       /* A sub-checkpoint that exists on both sides but has changed. */
@@ -543,6 +863,18 @@
 
       .diff-summary strong {
         color: var(--error);
+      }
+
+      /* Counts that describe expected extra content, not a problem. */
+      .diff-summary .diff-note {
+        color: #4338ca;
+        font-weight: 600;
+      }
+
+      /* Shown when a field differs only by additions in the compared environment. */
+      .diff-ok-note {
+        color: #4338ca;
+        font-weight: 600;
       }
 
       .expand-icon {
@@ -986,6 +1318,25 @@
             </select>
           </div>
 
+          <div class="filter-group" id="diffClassFilterGroup">
+            <label for="diffClassFilter">Avviksklasse:</label>
+            <select id="diffClassFilter">
+              <option value="">Alle sjekkpunkter</option>
+              <option value="must-fix">Må rettes (mangler + endret)</option>
+              <option value="missing" id="diffClassOptMissing">
+                Mangler helt i test
+              </option>
+              <option value="deviating">Endret eller mangelfullt innhold</option>
+              <option value="extra-only" id="diffClassOptExtra">
+                Kun ekstra innhold i test
+              </option>
+              <option value="dev-only" id="diffClassOptDevOnly">
+                Finnes bare i test
+              </option>
+              <option value="identical">Identiske</option>
+            </select>
+          </div>
+
           <div class="filter-group" id="fieldDifferenceFilterGroup">
             <label for="fieldDifferenceFilter">Felt med endringer:</label>
             <select id="fieldDifferenceFilter">
@@ -1043,6 +1394,13 @@
             ></div>
             <span id="legendExtra">Finnes bare i test</span>
           </div>
+          <div class="legend-item">
+            <div
+              class="legend-color"
+              style="background: #e0e7ff; border: 1px solid #6366f1"
+            ></div>
+            <span id="legendDevExtra">Ekstra innhold i test (forventet)</span>
+          </div>
         </div>
       </div>
 
@@ -1072,6 +1430,70 @@
             <p id="testOnlyLabel">Kun i test</p>
           </div>
         </div>
+      </div>
+
+      <div id="statsPanel" class="stats-panel" style="display: none">
+        <h2>Hvor like er miljøene?</h2>
+        <p class="stats-sub" id="statsSub"></p>
+
+        <div class="stats-top">
+          <div>
+            <div class="stats-hero-value" id="statsPct">0 %</div>
+            <div class="stats-hero-label" id="statsHeroLabel"></div>
+            <div class="stats-meter">
+              <span id="statsMeter" style="width: 0%"></span>
+            </div>
+            <div class="stats-hero-note" id="statsHeroNote"></div>
+          </div>
+
+          <div>
+            <div class="stats-stack" id="statsStack"></div>
+            <div class="stats-legend" id="statsLegend"></div>
+          </div>
+        </div>
+
+        <div class="stats-section">
+          <h3>Hva slags forskjeller er det?</h3>
+          <p class="stats-section-note" id="statsFieldNote"></p>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Felt</th>
+                <th class="num" id="statsThMissing">Mangler</th>
+                <th class="num">Endret</th>
+                <th class="num" id="statsThExtra">Ekstra</th>
+                <th>Fordeling</th>
+              </tr>
+            </thead>
+            <tbody id="statsFieldRows"></tbody>
+          </table>
+        </div>
+
+        <div class="stats-section">
+          <h3>Forskjeller per prosesskategori</h3>
+          <p class="stats-section-note" id="statsCatNote"></p>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Kategori</th>
+                <th class="num">Sjekkpunkt</th>
+                <th class="num">Samsvar</th>
+                <th>Fordeling</th>
+              </tr>
+            </thead>
+            <tbody id="statsCatRows"></tbody>
+          </table>
+        </div>
+
+        <p class="stats-hint">
+          Klikk på et tall, et fargefelt eller en rad for å gå rett til de
+          sjekkpunktene det gjelder. Treffene åpnes og markeres automatisk.
+        </p>
+      </div>
+
+      <div id="drillBanner" class="drill-banner">
+        <span id="drillBannerText"></span>
+        <button type="button" id="drillReset">Vis alt igjen</button>
       </div>
 
       <div id="results"></div>
@@ -1133,6 +1555,16 @@
         .getElementById("fieldDifferenceFilter")
         .addEventListener("change", applyFilters);
       document
+        .getElementById("diffClassFilter")
+        .addEventListener("change", applyFilters);
+      document.getElementById("drillReset").addEventListener("click", () => {
+        clearAllFilters();
+        document
+          .getElementById("statsPanel")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      initStatsDrill();
+      document
         .getElementById("expandModeFilter")
         .addEventListener("change", applyExpandMode);
       document
@@ -1172,6 +1604,14 @@
           `Mangler i ${rightLabel()}`;
         document.getElementById("legendExtra").textContent =
           `Finnes bare i ${rightLabel()}`;
+        document.getElementById("legendDevExtra").textContent =
+          `Ekstra innhold i ${rightLabel()} (forventet)`;
+        document.getElementById("diffClassOptMissing").textContent =
+          `Mangler helt i ${rightLabel()}`;
+        document.getElementById("diffClassOptExtra").textContent =
+          `Kun ekstra innhold i ${rightLabel()}`;
+        document.getElementById("diffClassOptDevOnly").textContent =
+          `Finnes bare i ${rightLabel()}`;
         document.getElementById("statusOptProdOnly").textContent =
           `Kun finnes i ${leftLabel()}`;
         document.getElementById("statusOptTestOnly").textContent =
@@ -1180,6 +1620,9 @@
 
       // ---- Persisted / shareable state (URL query + localStorage) ----
       const STORAGE_KEY = "sjekklisteViewerState";
+
+      // Kategori og felt kan først velges når dropdownene er fylt fra data.
+      let pendingSelection = null;
 
       function currentState() {
         return {
@@ -1191,6 +1634,9 @@
           expand: document.getElementById("expandModeFilter").value,
           q: document.getElementById("searchFilter").value,
           status: document.getElementById("statusFilter").value,
+          cls: document.getElementById("diffClassFilter").value,
+          cat: document.getElementById("categoryFilter").value,
+          field: document.getElementById("fieldDifferenceFilter").value,
         };
       }
 
@@ -1205,6 +1651,9 @@
         if (s.expand && s.expand !== "collapsed") params.set("expand", s.expand);
         if (s.q) params.set("q", s.q);
         if (s.status) params.set("status", s.status);
+        if (s.cls) params.set("cls", s.cls);
+        if (s.cat) params.set("cat", s.cat);
+        if (s.field) params.set("field", s.field);
         const query = params.toString();
         history.replaceState(
           null,
@@ -1230,6 +1679,9 @@
             expand: params.get("expand"),
             q: params.get("q"),
             status: params.get("status"),
+            cls: params.get("cls"),
+            cat: params.get("cat"),
+            field: params.get("field"),
           };
         } else {
           try {
@@ -1254,6 +1706,11 @@
         setSelect("expandModeFilter", s.expand);
         if (s.q != null) document.getElementById("searchFilter").value = s.q;
         setSelect("statusFilter", s.status);
+        setSelect("diffClassFilter", s.cls);
+
+        // Kategori- og feltlistene fylles først når data er lastet, så disse to
+        // må settes etterpå.
+        pendingSelection = { cat: s.cat || "", field: s.field || "" };
 
         leftEnv = document.getElementById("leftEnv").value;
         rightEnv = document.getElementById("rightEnv").value;
@@ -1276,6 +1733,11 @@
         loading.style.display = "block";
         error.style.display = "none";
         loadButton.disabled = true;
+
+        // Skjul forrige resultat, slik at en feilet lasting ikke etterlater
+        // tall fra de forrige miljøene.
+        document.getElementById("summary").style.display = "none";
+        document.getElementById("statsPanel").style.display = "none";
 
         try {
           // Load data from both selected endpoints
@@ -1325,9 +1787,24 @@
           document.getElementById("exportDiff").disabled = false;
           document.querySelector(".filters").style.display = "flex";
 
+          // Nå finnes kategori- og feltvalgene, så en lagret/delt utvalg kan
+          // settes før filtrene kjøres.
+          if (pendingSelection) {
+            const restore = (id, value) => {
+              if (!value) return;
+              const el = document.getElementById(id);
+              if ([...el.options].some((o) => o.value === value))
+                el.value = value;
+            };
+            restore("categoryFilter", pendingSelection.cat);
+            restore("fieldDifferenceFilter", pendingSelection.field);
+            pendingSelection = null;
+          }
+
           // Honor any restored/active expand mode and filters.
           applyExpandMode();
           applyFilters();
+          updateDrillBanner();
         } catch (err) {
           console.error("Error loading data:", err);
           // A blocked cross-origin request (or an unreachable environment)
@@ -1699,6 +2176,9 @@
         // Update summary
         updateSummary(comparisonData.summary);
 
+        // Statistikk over hvor like miljøene er
+        renderStatistics(computeStatistics(comparisonData));
+
         // Update category filter
         updateCategoryFilter(Object.keys(comparisonData.categories));
 
@@ -1724,6 +2204,423 @@
           });
 
         document.getElementById("summary").style.display = "block";
+      }
+
+      // ---- Klassifisering ---------------------------------------------------
+      // Én kilde til sannhet for «hva slags avvik er dette», brukt både av
+      // statistikken, radene i listen og filtrene. Resultatet mellomlagres på
+      // elementet, siden inlineDiff er kostbart og kalles for hvert felt.
+      //
+      //   identical  – ingen forskjell
+      //   extra-only – skiller seg bare ved ekstra innhold til høyre (forventet)
+      //   deviating  – noe fra fasiten er endret eller mangler
+      //   missing    – sjekkpunktet finnes ikke til høyre
+      //   dev-only   – sjekkpunktet finnes bare til høyre
+      function classifyItem(item) {
+        if (item.__classification) return item.__classification;
+
+        const kinds = {};
+        const bump = (field, kind, n) => {
+          if (!n) return;
+          if (!kinds[field])
+            kinds[field] = { missing: 0, changed: 0, extra: 0 };
+          kinds[field][kind] += n;
+        };
+
+        let cls;
+        if (item.status === "prodOnly") cls = "missing";
+        else if (item.status === "testOnly") cls = "dev-only";
+        else {
+          let anyDiff = false;
+          (item.differences || []).forEach((diff) => {
+            if (diff.type === "same") return;
+            const field = diff.field;
+
+            // Sub-checkpoint presence is recorded here; their changed fields are
+            // recorded on the sub-checkpoints themselves.
+            if (field === "Undersjekkpunkter") {
+              const st = diff.subResult && diff.subResult.stats;
+              if (st) {
+                bump(field, "missing", st.prodOnly);
+                bump(field, "extra", st.testOnly);
+                if (st.prodOnly || st.testOnly || st.different) anyDiff = true;
+                return;
+              }
+            }
+
+            anyDiff = true;
+
+            if (diff.type === "missing_in_test") {
+              bump(field, "missing", 1);
+              return;
+            }
+            if (diff.type === "missing_in_prod") {
+              bump(field, "extra", 1);
+              return;
+            }
+
+            // Lister sammenlignes på identitet, ikke på rekkefølge.
+            if (listComparable(diff.prodValue, diff.testValue)) {
+              const ld = listFieldDiff(field, diff.prodValue, diff.testValue);
+              if (ld.missing.length) bump(field, "missing", 1);
+              if (ld.changed.length) bump(field, "changed", 1);
+              if (ld.added.length) bump(field, "extra", 1);
+              return;
+            }
+
+            const inline = inlineDiff(diff.prodValue, diff.testValue);
+            if (inline.hasProblem) {
+              if (inline.missingInTest) bump(field, "missing", 1);
+              if (inline.changedInTest) bump(field, "changed", 1);
+            } else if (inline.addedInTest) {
+              bump(field, "extra", 1);
+            }
+          });
+
+          const problems = Object.keys(kinds).filter(
+            (f) => kinds[f].missing || kinds[f].changed,
+          );
+          cls = !anyDiff
+            ? "identical"
+            : problems.length
+              ? "deviating"
+              : "extra-only";
+        }
+
+        const result = {
+          cls,
+          kinds,
+          problemFields: Object.keys(kinds).filter(
+            (f) => kinds[f].missing || kinds[f].changed,
+          ),
+          extraFields: Object.keys(kinds).filter((f) => kinds[f].extra),
+        };
+        item.__classification = result;
+        return result;
+      }
+
+      // ---- Statistikk -------------------------------------------------------
+      // Måler hvor likt det høyre miljøet er det venstre, med venstre som fasit.
+      // Ekstra innhold på høyre side teller ikke som avvik, siden det er ventet.
+      function computeStatistics(comparisonData) {
+        const totals = {
+          identical: 0,
+          extraOnly: 0,
+          deviating: 0,
+          missing: 0,
+          extraCheckpoints: 0,
+        };
+        const fields = {};
+        const cats = {};
+
+        const bumpField = (field, kind, n) => {
+          if (!n) return;
+          if (!fields[field])
+            fields[field] = { missing: 0, changed: 0, extra: 0 };
+          fields[field][kind] += n;
+        };
+
+        Object.keys(comparisonData.categories).forEach((cat) => {
+          const c = (cats[cat] = {
+            total: 0,
+            identical: 0,
+            extraOnly: 0,
+            deviating: 0,
+            missing: 0,
+            extraCheckpoints: 0,
+          });
+
+          const walk = (items) => {
+            Object.values(items || {}).forEach((item) => {
+              const r = classifyItem(item);
+
+              if (r.cls === "dev-only") {
+                c.extraCheckpoints++;
+                totals.extraCheckpoints++;
+                return;
+              }
+
+              c.total++;
+              if (r.cls === "missing") {
+                c.missing++;
+                totals.missing++;
+              } else if (r.cls === "deviating") {
+                c.deviating++;
+                totals.deviating++;
+              } else if (r.cls === "extra-only") {
+                c.extraOnly++;
+                totals.extraOnly++;
+              } else {
+                c.identical++;
+                totals.identical++;
+              }
+
+              Object.keys(r.kinds).forEach((f) => {
+                bumpField(f, "missing", r.kinds[f].missing);
+                bumpField(f, "changed", r.kinds[f].changed);
+                bumpField(f, "extra", r.kinds[f].extra);
+              });
+
+              // Sub-checkpoints are checkpoints too — count them the same way.
+              const sub = (item.differences || []).find(
+                (d) => d.field === "Undersjekkpunkter" && d.subResult,
+              );
+              if (sub) walk(sub.subResult.subItems);
+            });
+          };
+
+          walk(comparisonData.categories[cat].items);
+        });
+
+        const base =
+          totals.identical +
+          totals.extraOnly +
+          totals.deviating +
+          totals.missing;
+        const conform = base
+          ? ((totals.identical + totals.extraOnly) / base) * 100
+          : 0;
+
+        return { totals, fields, cats, base, conform };
+      }
+
+      function renderStatistics(stats) {
+        const { totals, fields, cats, base, conform } = stats;
+        const pct = (n) => (base ? (n / base) * 100 : 0);
+        const fmtPct = (v) =>
+          `${v.toFixed(v > 0 && v < 1 ? 1 : 0).replace(".", ",")} %`;
+
+        document.getElementById("statsSub").textContent =
+          `${leftLabel()} er fasit. Ekstra innhold i ${rightLabel()} regnes som forventet og teller ikke som avvik.`;
+        document.getElementById("statsHeroLabel").textContent =
+          `samsvar med ${leftLabel()}`;
+        document.getElementById("statsPct").textContent = fmtPct(conform);
+        document.getElementById("statsHeroNote").textContent =
+          `${totals.identical + totals.extraOnly} av ${base} sjekkpunkter i ${leftLabel()} er ivaretatt i ${rightLabel()}.`;
+
+        const meter = document.getElementById("statsMeter");
+        meter.style.width = `${Math.max(0, Math.min(100, conform))}%`;
+        meter.style.background =
+          conform >= 95
+            ? "var(--st-identical)"
+            : conform >= 75
+              ? "var(--st-changed)"
+              : "var(--st-missing)";
+
+        // Andel-av-helhet, sortert etter stigende alvorlighet.
+        const segments = [
+          {
+            key: "identical",
+            n: totals.identical,
+            color: "var(--st-identical)",
+            label: "Identiske",
+          },
+          {
+            key: "extraOnly",
+            n: totals.extraOnly,
+            color: "var(--st-extra)",
+            label: `Kun ekstra i ${rightLabel()}`,
+          },
+          {
+            key: "deviating",
+            n: totals.deviating,
+            color: "var(--st-changed)",
+            label: "Avvikende innhold",
+          },
+          {
+            key: "missing",
+            n: totals.missing,
+            color: "var(--st-missing)",
+            label: `Mangler i ${rightLabel()}`,
+          },
+        ];
+
+        // Segmentene og forklaringen er inngangen til drill-down.
+        const drillCls = {
+          identical: "identical",
+          extraOnly: "extra-only",
+          deviating: "deviating",
+          missing: "missing",
+        };
+
+        document.getElementById("statsStack").innerHTML = segments
+          .filter((s) => s.n > 0)
+          .map(
+            (s) =>
+              `<div class="stats-clickable" role="button" tabindex="0"` +
+              ` data-drill-cls="${drillCls[s.key]}"` +
+              ` style="width:${pct(s.n)}%;background:${s.color}"` +
+              ` title="${escapeHtml(s.label)}: ${s.n} – klikk for å se dem"></div>`,
+          )
+          .join("");
+
+        document.getElementById("statsLegend").innerHTML = segments
+          .map(
+            (s) =>
+              `<span class="stats-legend-item stats-clickable" role="button" tabindex="0"` +
+              ` data-drill-cls="${drillCls[s.key]}"` +
+              ` title="Klikk for å se disse ${s.n} sjekkpunktene">` +
+              `<span class="stats-swatch" style="background:${s.color}"></span>` +
+              `<span class="stats-legend-count">${s.n}</span>` +
+              `<span class="stats-legend-label">${escapeHtml(s.label)}</span>` +
+              `<span class="stats-legend-pct">${fmtPct(pct(s.n))}</span>` +
+              `</span>`,
+          )
+          .join("");
+
+        document.getElementById("statsThMissing").textContent =
+          `Mangler i ${rightLabel()}`;
+        document.getElementById("statsThExtra").textContent =
+          `Ekstra i ${rightLabel()}`;
+
+        // Feltoversikt: mange felt, så tabell med stolper framfor et diagram.
+        const rows = Object.keys(fields)
+          .map((f) => ({ field: f, ...fields[f] }))
+          .filter((r) => r.missing || r.changed || r.extra)
+          .sort(
+            (a, b) =>
+              b.missing + b.changed - (a.missing + a.changed) ||
+              b.extra - a.extra ||
+              a.field.localeCompare(b.field),
+          );
+
+        const maxRow = rows.reduce(
+          (m, r) => Math.max(m, r.missing + r.changed + r.extra),
+          0,
+        );
+        const problemTotal = rows.reduce(
+          (a, r) => a + r.missing + r.changed,
+          0,
+        );
+        const problemFields = rows.filter((r) => r.missing || r.changed).length;
+
+        document.getElementById("statsFieldNote").textContent = problemTotal
+          ? `${problemTotal} avvik som må rettes, fordelt på ${problemFields} felt. «Ekstra i ${rightLabel()}» er forventet og krever ingen handling.`
+          : rows.length
+            ? `Ingen avvik å rette – alle forskjeller er ekstra innhold i ${rightLabel()}.`
+            : "";
+
+        // Tallene står i vanlig tekstfarge; stolpen ved siden av bærer fargekoden.
+        // Hvert tall er en inngang til de sjekkpunktene det gjelder.
+        const cell = (n, field, cls, what) =>
+          n
+            ? `<td class="num stats-clickable" role="button" tabindex="0"` +
+              ` style="font-weight:600" data-drill-cls="${cls}"` +
+              ` data-drill-field="${escapeHtml(field)}"` +
+              ` title="Klikk for å se de ${n} sjekkpunktene der ${escapeHtml(field)} ${what}">${n}</td>`
+            : `<td class="num stats-zero">–</td>`;
+
+        document.getElementById("statsFieldRows").innerHTML = rows.length
+          ? rows
+              .map((r) => {
+                const bar = [
+                  { n: r.missing, c: "var(--st-missing)" },
+                  { n: r.changed, c: "var(--st-changed)" },
+                  { n: r.extra, c: "var(--st-extra)" },
+                ]
+                  .filter((s) => s.n > 0)
+                  .map(
+                    (s) =>
+                      `<div style="width:${maxRow ? (s.n / maxRow) * 100 : 0}%;background:${s.c}"></div>`,
+                  )
+                  .join("");
+                return (
+                  `<tr><td class="field stats-clickable" role="button" tabindex="0"` +
+                  ` data-drill-field="${escapeHtml(r.field)}"` +
+                  ` title="Klikk for å se alle sjekkpunkter der ${escapeHtml(r.field)} skiller seg">` +
+                  `${escapeHtml(r.field)}</td>` +
+                  cell(r.missing, r.field, "must-fix", `mangler i ${rightLabel()}`) +
+                  cell(r.changed, r.field, "must-fix", "er endret") +
+                  cell(r.extra, r.field, "extra-only", `har ekstra innhold i ${rightLabel()}`) +
+                  `<td><div class="stats-bar">${bar}</div></td></tr>`
+                );
+              })
+              .join("")
+          : `<tr><td colspan="5" class="stats-empty">Ingen feltforskjeller.</td></tr>`;
+
+        // Per kategori, dårligst samsvar først.
+        const catRows = Object.keys(cats)
+          .map((c) => {
+            const v = cats[c];
+            return {
+              cat: c,
+              ...v,
+              conform: v.total
+                ? ((v.identical + v.extraOnly) / v.total) * 100
+                : 100,
+            };
+          })
+          .filter((c) => c.total > 0)
+          .sort((a, b) => a.conform - b.conform || b.total - a.total);
+
+        // Kategorier som bare finnes til høyre har ingen fasit å måles mot, så de
+        // faller ut av tabellen. Nevn dem, ellers forsvinner de i stillhet.
+        const onlyRight = Object.keys(cats)
+          .filter((c) => cats[c].total === 0 && cats[c].extraCheckpoints > 0)
+          .sort();
+
+        document.getElementById("statsCatNote").textContent =
+          "Dårligst samsvar først. Stolpen viser fordelingen innenfor hver kategori." +
+          (onlyRight.length
+            ? ` Finnes bare i ${rightLabel()}, uten fasit å måles mot: ` +
+              onlyRight
+                .map((c) => `${c} (${cats[c].extraCheckpoints})`)
+                .join(", ") +
+              "."
+            : "");
+
+        document.getElementById("statsCatRows").innerHTML = catRows
+          .map((c) => {
+            const bar = [
+              { n: c.identical, col: "var(--st-identical)" },
+              { n: c.extraOnly, col: "var(--st-extra)" },
+              { n: c.deviating, col: "var(--st-changed)" },
+              { n: c.missing, col: "var(--st-missing)" },
+            ]
+              .filter((s) => s.n > 0)
+              .map(
+                (s) =>
+                  `<div style="width:${(s.n / c.total) * 100}%;background:${s.col}"></div>`,
+              )
+              .join("");
+            const toFix = c.deviating + c.missing;
+            return (
+              `<tr class="stats-clickable-row" role="button" tabindex="0"` +
+              ` data-drill-category="${escapeHtml(c.cat)}"` +
+              ` data-drill-cls="${toFix ? "must-fix" : ""}"` +
+              ` title="Klikk for å se ${toFix ? `de ${toFix} sjekkpunktene som må rettes i ${escapeHtml(c.cat)}` : `kategori ${escapeHtml(c.cat)}`}">` +
+              `<td class="field">${escapeHtml(c.cat)}</td>` +
+              `<td class="num">${c.total}</td>` +
+              `<td class="num" style="font-weight:600">${fmtPct(c.conform)}</td>` +
+              `<td><div class="stats-bar">${bar}</div></td></tr>`
+            );
+          })
+          .join("");
+
+        document.getElementById("statsPanel").style.display = "block";
+      }
+
+      // Klikk (og Enter/Space) hvor som helst i statistikkpanelet som bærer et
+      // data-drill-* attributt fører rett til de aktuelle sjekkpunktene.
+      function initStatsDrill() {
+        const panel = document.getElementById("statsPanel");
+
+        const handle = (target) => {
+          const el = target.closest("[data-drill-cls],[data-drill-field],[data-drill-category]");
+          if (!el || !panel.contains(el)) return false;
+          drillTo({
+            category: el.dataset.drillCategory || "",
+            cls: el.dataset.drillCls || "",
+            field: el.dataset.drillField || "",
+          });
+          return true;
+        };
+
+        panel.addEventListener("click", (e) => handle(e.target));
+        panel.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          if (handle(e.target)) e.preventDefault();
+        });
       }
 
       function updateSummary(summary) {
@@ -1753,17 +2650,20 @@
 
         const allFieldsWithDifferences = new Set();
 
-        // Samle alle felt som har forskjeller fra alle kategorier
-        Object.values(categoriesData).forEach((categoryData) => {
-          Object.values(categoryData.items).forEach((item) => {
-            if (item.differences) {
-              item.differences
-                .filter((diff) => diff.type !== "same")
-                .forEach((diff) => {
-                  allFieldsWithDifferences.add(diff.field);
-                });
-            }
+        // Samle felt fra klassifiseringen, inkludert undersjekkpunkter, slik at
+        // listen bare inneholder felt filteret faktisk kan finne.
+        const collect = (items) => {
+          Object.values(items || {}).forEach((item) => {
+            const c = classifyItem(item);
+            Object.keys(c.kinds).forEach((f) => allFieldsWithDifferences.add(f));
+            const sub = (item.differences || []).find(
+              (d) => d.field === "Undersjekkpunkter" && d.subResult,
+            );
+            if (sub) collect(sub.subResult.subItems);
           });
+        };
+        Object.values(categoriesData).forEach((categoryData) => {
+          collect(categoryData.items);
         });
 
         // Legg til felt i dropdown sortert alfabetisk
@@ -1960,6 +2860,12 @@
             ].join(",")
           : "";
         itemElement.dataset.fieldsWithDifferences = fieldsWithDifferences;
+
+        // Avviksklasse og feltlister, slik at statistikken kan filtrere direkte.
+        const cls = classifyItem(itemData);
+        itemElement.dataset.diffClass = cls.cls;
+        itemElement.dataset.problemFields = cls.problemFields.join(",");
+        itemElement.dataset.extraFields = cls.extraFields.join(",");
 
         // Searchable IDs (exact match) and names (substring match)
         const searchIds = new Set([String(itemData.id).toLowerCase()]);
@@ -2165,6 +3071,11 @@
         row.dataset.status = subItemData.status;
         row.dataset.id = subItemData.id;
 
+        const subCls = classifyItem(subItemData);
+        row.dataset.diffClass = subCls.cls;
+        row.dataset.problemFields = subCls.problemFields.join(",");
+        row.dataset.extraFields = subCls.extraFields.join(",");
+
         const header = document.createElement("div");
         header.className = "subcheckpoint-header";
 
@@ -2342,6 +3253,8 @@
 
         prodDiv.className = className;
         testDiv.className = className;
+        prodDiv.dataset.field = diff.field;
+        testDiv.dataset.field = diff.field;
 
         // Special handling for Undersjekkpunkter
         if (diff.field === "Undersjekkpunkter") {
@@ -2391,7 +3304,7 @@
                   if (side === "prod" && status === "prodOnly")
                     return `<span class="diff-prod-only">${esc}</span>`;
                   if (side === "test" && status === "testOnly")
-                    return `<span class="diff-test-only">${esc}</span>`;
+                    return `<span class="diff-test-added">${esc}</span>`;
                   return esc;
                 })
                 .join(", ");
@@ -2403,16 +3316,26 @@
               parts.push(
                 `<strong>${stats.prodOnly}</strong> mangler i ${rightLabel()}`,
               );
-            if (stats.testOnly)
-              parts.push(
-                `<strong>${stats.testOnly}</strong> finnes bare i ${rightLabel()}`,
-              );
             if (stats.different)
               parts.push(`<strong>${stats.different}</strong> endret`);
+            if (stats.testOnly)
+              parts.push(
+                `<span class="diff-note">${stats.testOnly} ekstra i ${rightLabel()}</span>`,
+              );
+
+            // Only extra sub-checkpoints on the right is expected, not an error.
+            const subProblem = stats.prodOnly > 0 || stats.different > 0;
+            if (!subProblem && stats.testOnly) {
+              prodDiv.className = "field-diff field-dev-extra";
+              testDiv.className = "field-diff field-dev-extra";
+            }
+
             if (parts.length) {
               summaryProd = document.createElement("div");
               summaryProd.className = "diff-summary";
-              summaryProd.innerHTML = `Avvik fra ${leftLabel()}: ${parts.join(", ")}`;
+              summaryProd.innerHTML = subProblem
+                ? `Avvik fra ${leftLabel()}: ${parts.join(", ")}`
+                : `<span class="diff-ok-note">Bare ekstra undersjekkpunkter i ${rightLabel()} – ingenting fra ${leftLabel()} mangler</span>`;
               summaryTest = summaryProd.cloneNode(true);
             }
 
@@ -2451,14 +3374,89 @@
 
         let summaryProd = null;
         let summaryTest = null;
+        // Lister av objekter: sammenlign oppføring mot oppføring, ikke tekst mot
+        // tekst, slik at ulik rekkefølge ikke ser ut som manglende innhold.
+        if (
+          diff.type === "different" &&
+          listComparable(diff.prodValue, diff.testValue)
+        ) {
+          const ld = listFieldDiff(diff.field, diff.prodValue, diff.testValue);
+          prodValue.innerHTML = ld.prodHtml;
+          testValue.innerHTML = ld.testHtml;
+
+          if (!ld.hasProblem) {
+            prodDiv.className = "field-diff field-dev-extra";
+            testDiv.className = "field-diff field-dev-extra";
+          }
+
+          const parts = [];
+          if (ld.missing.length)
+            parts.push(
+              `<strong>${ld.missing.length}</strong> mangler i ${rightLabel()}`,
+            );
+          if (ld.changed.length)
+            parts.push(`<strong>${ld.changed.length}</strong> endret`);
+          if (ld.added.length)
+            parts.push(
+              `<span class="diff-note">${ld.added.length} ekstra i ${rightLabel()}</span>`,
+            );
+
+          summaryProd = document.createElement("div");
+          summaryProd.className = "diff-summary";
+          if (ld.hasProblem) {
+            summaryProd.innerHTML = `Avvik fra ${leftLabel()}: ${parts.join(", ")}`;
+          } else if (ld.orderOnly && !ld.added.length) {
+            summaryProd.innerHTML = `<span class="diff-ok-note">Samme oppføringer, kun ulik rekkefølge</span>`;
+          } else {
+            summaryProd.innerHTML = `<span class="diff-ok-note">Bare ekstra oppføringer i ${rightLabel()} – ingenting fra ${leftLabel()} mangler</span>`;
+          }
+          summaryTest = summaryProd.cloneNode(true);
+
+          prodDiv.appendChild(prodName);
+          prodDiv.appendChild(summaryProd);
+          prodDiv.appendChild(prodValue);
+          testDiv.appendChild(testName);
+          testDiv.appendChild(summaryTest);
+          testDiv.appendChild(testValue);
+          return { prod: prodDiv, test: testDiv };
+        }
+
         if (diff.type === "different") {
           const inline = inlineDiff(diff.prodValue, diff.testValue);
           prodValue.innerHTML = inline.prodHtml;
           testValue.innerHTML = inline.testHtml;
 
+          // Extra content in the compared environment is expected, so a field that
+          // only gained content is not an error — restyle it and say so. The same
+          // goes for a difference that is nothing but whitespace.
+          if (!inline.hasProblem && (inline.addedInTest || inline.whitespaceOnly)) {
+            prodDiv.className = "field-diff field-dev-extra";
+            testDiv.className = "field-diff field-dev-extra";
+          }
+
+          const parts = [];
+          if (inline.missingInTest)
+            parts.push(
+              `<strong>${inline.missingInTest}</strong> mangler i ${rightLabel()}`,
+            );
+          if (inline.changedInTest)
+            parts.push(
+              `<strong>${inline.changedInTest}</strong> endret i ${rightLabel()}`,
+            );
+          if (inline.addedInTest)
+            parts.push(
+              `<span class="diff-note">${inline.addedInTest} ekstra i ${rightLabel()}</span>`,
+            );
+
           summaryProd = document.createElement("div");
           summaryProd.className = "diff-summary";
-          summaryProd.innerHTML = `Avvik fra ${leftLabel()}: <strong>${inline.missingInTest}</strong> mangler i ${rightLabel()}, <strong>${inline.deviatesFromProd}</strong> avvik i ${rightLabel()}`;
+          if (inline.hasProblem) {
+            summaryProd.innerHTML = `Avvik fra ${leftLabel()}: ${parts.join(", ")}`;
+          } else if (inline.whitespaceOnly) {
+            summaryProd.innerHTML = `<span class="diff-ok-note">Kun forskjell i mellomrom/formatering</span>`;
+          } else {
+            summaryProd.innerHTML = `<span class="diff-ok-note">Bare ekstra innhold i ${rightLabel()} – ingenting fra ${leftLabel()} mangler</span>`;
+          }
           summaryTest = summaryProd.cloneNode(true);
         } else {
           prodValue.textContent = formatValue(diff.prodValue);
@@ -2496,13 +3494,146 @@
         return String(str).match(/\s+|[A-Za-zÆØÅæøå0-9_]+|[^\s\w]/g) || [];
       }
 
+      // ---- Lister av objekter ----------------------------------------------
+      // Felt som Tiltakstyper er mengder, ikke tekst. En tekstdiff av JSON-en
+      // ville meldt «mangler i test» så snart rekkefølgen var en annen, selv om
+      // hver enkelt Kode fantes på begge sider. Derfor sammenlignes disse
+      // feltene på identitet, uavhengig av plassering i listen.
+      const LIST_IDENTITY = {
+        Tiltakstyper: (x) => x && x.Kode,
+        Lovhjemmel: (x) => x && String(x.Lovhjemmel || "").trim().toLowerCase(),
+        Metadata: (x) => x && `${x.TypeId}|${String(x.Value || "").trim()}`,
+        Utfall: (x) => x && `${x.Utfalltypekode}|${x.Utfallverdi}`,
+      };
+
+      // Nøkkelrekkefølge i objekter skal heller ikke gi falske avvik.
+      function canonicalJson(v) {
+        if (v === null || typeof v !== "object") return JSON.stringify(v);
+        if (Array.isArray(v)) return `[${v.map(canonicalJson).join(",")}]`;
+        return `{${Object.keys(v)
+          .sort()
+          .map((k) => `${JSON.stringify(k)}:${canonicalJson(v[k])}`)
+          .join(",")}}`;
+      }
+
+      function isObjectList(v) {
+        return (
+          Array.isArray(v) &&
+          v.every((e) => e && typeof e === "object" && !Array.isArray(e))
+        );
+      }
+
+      // Kan dette feltet sammenlignes som liste på begge sider?
+      function listComparable(prodValue, testValue) {
+        return (
+          isObjectList(prodValue) &&
+          isObjectList(testValue) &&
+          (prodValue.length > 0 || testValue.length > 0)
+        );
+      }
+
+      function listFieldDiff(field, prodArr, testArr) {
+        const identify = (entry, i) => {
+          const fn = LIST_IDENTITY[field];
+          const k = fn ? fn(entry) : undefined;
+          return k === undefined || k === null || k === ""
+            ? canonicalJson(entry)
+            : String(k);
+        };
+        // Samme nøkkel kan forekomme flere ganger; skill dem med et løpenummer.
+        const indexBy = (arr) => {
+          const map = new Map();
+          const seen = new Map();
+          (arr || []).forEach((entry, i) => {
+            let key = identify(entry, i);
+            const n = (seen.get(key) || 0) + 1;
+            seen.set(key, n);
+            if (n > 1) key += `#${n}`;
+            map.set(key, entry);
+          });
+          return map;
+        };
+
+        const P = indexBy(prodArr);
+        const T = indexBy(testArr);
+        const missing = [],
+          changed = [],
+          added = [];
+
+        P.forEach((entry, key) => {
+          if (!T.has(key)) missing.push(key);
+          else if (canonicalJson(entry) !== canonicalJson(T.get(key)))
+            changed.push(key);
+        });
+        T.forEach((entry, key) => {
+          if (!P.has(key)) added.push(key);
+        });
+
+        const keyOf = (arr) => {
+          const seen = new Map();
+          return (arr || []).map((entry, i) => {
+            let key = identify(entry, i);
+            const n = (seen.get(key) || 0) + 1;
+            seen.set(key, n);
+            return n > 1 ? `${key}#${n}` : key;
+          });
+        };
+
+        const render = (arr, side) => {
+          const keys = keyOf(arr);
+          if (!keys.length) return "<em>Ingen</em>";
+          return keys
+            .map((key, i) => {
+              const text = escapeHtml(JSON.stringify(arr[i]));
+              let cssClass = "";
+              if (changed.includes(key))
+                cssClass = side === "prod" ? "diff-changed" : "diff-test-only";
+              else if (side === "prod" && missing.includes(key))
+                cssClass = "diff-prod-only";
+              else if (side === "test" && added.includes(key))
+                cssClass = "diff-test-added";
+              return cssClass
+                ? `<span class="${cssClass}">${text}</span>`
+                : text;
+            })
+            .join(",<br>");
+        };
+
+        // Ingen innholdsforskjell, men listene står i ulik rekkefølge.
+        const orderOnly =
+          !missing.length &&
+          !changed.length &&
+          !added.length &&
+          keyOf(prodArr).join("|") !== keyOf(testArr).join("|");
+
+        return {
+          missing,
+          changed,
+          added,
+          orderOnly,
+          prodHtml: render(prodArr, "prod"),
+          testHtml: render(testArr, "test"),
+          hasProblem: missing.length > 0 || changed.length > 0,
+        };
+      }
+
+      // Two whitespace runs are interchangeable when comparing. Without this the
+      // LCS can anchor on a distant single space and strand a word on either side
+      // of it, which surfaces as a phantom "missing + added" pair for text that
+      // only differs in spacing.
+      function diffKey(token) {
+        return /^\s+$/.test(token) ? " " : token;
+      }
+
       function lcsDiff(aTokens, bTokens) {
         const m = aTokens.length,
           n = bTokens.length;
+        const aKeys = aTokens.map(diffKey);
+        const bKeys = bTokens.map(diffKey);
         const dp = Array.from({ length: m + 1 }, () => new Uint32Array(n + 1));
         for (let i = 1; i <= m; i++) {
           for (let j = 1; j <= n; j++) {
-            if (aTokens[i - 1] === bTokens[j - 1]) {
+            if (aKeys[i - 1] === bKeys[j - 1]) {
               dp[i][j] = dp[i - 1][j - 1] + 1;
             } else {
               dp[i][j] =
@@ -2514,8 +3645,13 @@
         let i = m,
           j = n;
         while (i > 0 && j > 0) {
-          if (aTokens[i - 1] === bTokens[j - 1]) {
-            ops.unshift({ type: "eq", token: aTokens[i - 1] });
+          if (aKeys[i - 1] === bKeys[j - 1]) {
+            // Keep both sides' text so each pane still renders its own spacing.
+            ops.unshift({
+              type: "eq",
+              token: aTokens[i - 1],
+              tokenB: bTokens[j - 1],
+            });
             i--;
             j--;
           } else if (dp[i - 1][j] >= dp[i][j - 1]) {
@@ -2547,25 +3683,69 @@
         let prodHtml = "";
         let testHtml = "";
         let missingInTest = 0,
-          deviatesFromProd = 0;
+          changedInTest = 0,
+          addedInTest = 0;
 
-        ops.forEach((op) => {
-          const escaped = escapeHtml(op.token);
-          if (op.type === "eq") {
-            prodHtml += escaped;
-            testHtml += escaped;
-          } else if (op.type === "del") {
-            // In prod but not in test — test is missing this.
-            prodHtml += `<span class="diff-prod-only">${escaped}</span>`;
-            if (op.token.trim()) missingInTest++;
-          } else if (op.type === "ins") {
-            // In test but not in prod — test deviates from prod.
-            testHtml += `<span class="diff-test-only">${escaped}</span>`;
-            if (op.token.trim()) deviatesFromProd++;
+        // Walk the ops in runs of consecutive changes. A run holding both a
+        // deletion and an insertion is a replacement — the compared environment
+        // changed a value prod had. A run of insertions alone is a pure addition,
+        // which is expected here and must not be flagged as an error.
+        let i = 0;
+        while (i < ops.length) {
+          if (ops[i].type === "eq") {
+            prodHtml += escapeHtml(ops[i].token);
+            testHtml += escapeHtml(
+              ops[i].tokenB !== undefined ? ops[i].tokenB : ops[i].token,
+            );
+            i++;
+            continue;
           }
-        });
 
-        return { prodHtml, testHtml, missingInTest, deviatesFromProd };
+          let j = i;
+          let hasDel = false,
+            hasIns = false;
+          while (j < ops.length && ops[j].type !== "eq") {
+            if (ops[j].type === "del") hasDel = true;
+            else hasIns = true;
+            j++;
+          }
+
+          const replacement = hasDel && hasIns;
+          for (let k = i; k < j; k++) {
+            const op = ops[k];
+            const escaped = escapeHtml(op.token);
+            const counts = op.token.trim() ? 1 : 0;
+            if (op.type === "del") {
+              // Present in prod, absent here — the compared environment lacks it.
+              prodHtml += `<span class="diff-prod-only">${escaped}</span>`;
+              if (replacement) changedInTest += counts;
+              else missingInTest += counts;
+            } else {
+              testHtml += replacement
+                ? `<span class="diff-test-only">${escaped}</span>`
+                : `<span class="diff-test-added">${escaped}</span>`;
+              if (!replacement) addedInTest += counts;
+            }
+          }
+          i = j;
+        }
+
+        return {
+          prodHtml,
+          testHtml,
+          missingInTest,
+          changedInTest,
+          addedInTest,
+          // The raw values differ, yet nothing substantive was added, removed or
+          // replaced — so the difference is purely whitespace/formatting.
+          whitespaceOnly:
+            prodStr !== testStr &&
+            !missingInTest &&
+            !changedInTest &&
+            !addedInTest,
+          // Anything that is not a pure addition needs attention.
+          hasProblem: missingInTest > 0 || changedInTest > 0,
+        };
       }
 
       function formatUndersjekkpunkter(value) {
@@ -2615,6 +3795,146 @@
         });
       }
 
+      // Does this row (item or sub-checkpoint) itself match the drill-down?
+      // Which field list counts depends on the class being asked for: asking for
+      // problems looks at the problem fields, asking for extras at the extras.
+      function rowMatchesDrill(row, cls, field) {
+        const rowCls = row.dataset.diffClass || "";
+
+        if (cls === "must-fix") {
+          if (rowCls !== "deviating" && rowCls !== "missing") return false;
+        } else if (cls && rowCls !== cls) {
+          return false;
+        }
+
+        if (field) {
+          const problem = (row.dataset.problemFields || "")
+            .split(",")
+            .filter(Boolean);
+          const extra = (row.dataset.extraFields || "")
+            .split(",")
+            .filter(Boolean);
+          const pool =
+            cls === "extra-only"
+              ? extra
+              : cls === "must-fix" || cls === "deviating" || cls === "missing"
+                ? problem
+                : problem.concat(extra);
+          if (!pool.includes(field)) return false;
+        }
+
+        return true;
+      }
+
+      // ---- Drill-down fra statistikken -------------------------------------
+      // Setter filtrene som svarer til det man klikket på, åpner treffene og
+      // ruller ned til listen.
+      const DIFF_CLASS_TEXT = {
+        "must-fix": () => "må rettes",
+        missing: () => `mangler i ${rightLabel()}`,
+        deviating: () => "endret eller mangelfullt innhold",
+        "extra-only": () => `kun ekstra innhold i ${rightLabel()}`,
+        "dev-only": () => `finnes bare i ${rightLabel()}`,
+        identical: () => "identiske",
+      };
+
+      function drillTo({ category = "", cls = "", field = "" }) {
+        const set = (id, value) => {
+          const el = document.getElementById(id);
+          if ([...el.options].some((o) => o.value === value)) el.value = value;
+        };
+        set("categoryFilter", category);
+        set("diffClassFilter", cls);
+        set("fieldDifferenceFilter", field);
+
+        // Statusfilteret er den gamle, grovere inndelingen. Det ville overstyre
+        // avviksklassen, så det nullstilles ved drill-down.
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("searchFilter").value = "";
+
+        applyFilters();
+        updateDrillBanner();
+
+        document
+          .getElementById(category || cls || field ? "drillBanner" : "results")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function updateDrillBanner() {
+        const category = document.getElementById("categoryFilter").value;
+        const cls = document.getElementById("diffClassFilter").value;
+        const field = document.getElementById("fieldDifferenceFilter").value;
+        const banner = document.getElementById("drillBanner");
+
+        if (!category && !cls && !field) {
+          banner.classList.remove("visible");
+          return;
+        }
+
+        const visible = [
+          ...document.querySelectorAll("#results .item-row"),
+        ].filter((el) => el.style.display !== "none").length;
+        const hits = document.querySelectorAll("#results .drill-hit").length;
+
+        const parts = [];
+        if (cls && DIFF_CLASS_TEXT[cls]) parts.push(DIFF_CLASS_TEXT[cls]());
+        if (field) parts.push(`felt «${field}»`);
+        if (category) parts.push(`kategori ${category}`);
+
+        document.getElementById("drillBannerText").innerHTML =
+          `Viser <strong>${hits || visible}</strong> treff` +
+          (parts.length ? `: ${escapeHtml(parts.join(" · "))}` : "") +
+          `. Treffene er åpnet og markert.`;
+        banner.classList.add("visible");
+      }
+
+      // Åpne alle nivåer fram til treffene inne i et sjekkpunkt, og marker det
+      // aktuelle feltet, slik at avviket er synlig uten å klikke seg nedover.
+      function revealDrillHits(item, field) {
+        const hits = [...item.querySelectorAll(".drill-hit")];
+        const selfHit = item.classList.contains("drill-hit");
+        if (!selfHit && !hits.length) return;
+
+        const header = item.querySelector(":scope > .item-header");
+        const details = item.querySelector(":scope > .item-details");
+        if (header) header.classList.add("expanded");
+        if (details) details.classList.add("expanded");
+
+        // Åpne hvert treff og alle forfedre opp til sjekkpunktet.
+        hits.forEach((hit) => {
+          let node = hit;
+          while (node && node !== item) {
+            if (node.classList.contains("subcheckpoint-row")) {
+              const sh = node.querySelector(":scope > .subcheckpoint-header");
+              const sd = node.querySelector(":scope > .subcheckpoint-details");
+              if (sh) sh.classList.add("expanded");
+              if (sd) sd.classList.add("expanded");
+            }
+            node = node.parentElement;
+          }
+        });
+
+        if (!field) return;
+
+        // Marker feltet, men bare der det hører til raden som traff – ikke i
+        // nestede underpunkt.
+        const markRow = (row) => {
+          const isSub = row.classList.contains("subcheckpoint-row");
+          const own = row.querySelector(
+            isSub ? ":scope > .subcheckpoint-details" : ":scope > .item-details",
+          );
+          if (!own) return;
+          own.querySelectorAll("[data-field]").forEach((el) => {
+            if (el.dataset.field !== field) return;
+            if (el.closest(".subcheckpoint-row") === (isSub ? row : null))
+              el.classList.add("field-hit");
+          });
+        };
+
+        if (selfHit) markRow(item);
+        hits.forEach(markRow);
+      }
+
       function applyFilters() {
         const categoryFilter = document.getElementById("categoryFilter").value;
         const statusFilter = document.getElementById("statusFilter").value;
@@ -2624,9 +3944,20 @@
         const fieldDifferenceFilter = document.getElementById(
           "fieldDifferenceFilter",
         ).value;
+        const diffClassFilter =
+          document.getElementById("diffClassFilter").value;
+        const drillActive = !!(diffClassFilter || fieldDifferenceFilter);
 
         // Update filter visual states
         updateFilterVisualStates();
+
+        // Start from a clean slate: previous drill highlights must not linger.
+        document
+          .querySelectorAll(".drill-hit")
+          .forEach((el) => el.classList.remove("drill-hit"));
+        document
+          .querySelectorAll(".field-hit")
+          .forEach((el) => el.classList.remove("field-hit"));
 
         const categories = document.querySelectorAll(".category-group");
 
@@ -2654,8 +3985,6 @@
               const id = item.dataset.id.toLowerCase();
               const searchIds = (item.dataset.searchIds || id).split("|");
               const searchNames = item.dataset.searchNames || "";
-              const fieldsWithDifferences =
-                item.dataset.fieldsWithDifferences || "";
               let showItem = true;
 
               // Status filter
@@ -2677,20 +4006,59 @@
                 }
               }
 
-              // Field difference filter
-              if (
-                fieldDifferenceFilter &&
-                !fieldsWithDifferences
-                  .split(",")
-                  .includes(fieldDifferenceFilter)
-              ) {
-                showItem = false;
+              // Drill-down på avviksklasse og/eller felt. Et sjekkpunkt vises
+              // også når treffet ligger i et undersjekkpunkt, ellers ville de
+              // manglende underpunktene bli usynlige.
+              const subRows = [...item.querySelectorAll(".subcheckpoint-row")];
+              const subVisible = new Map();
+
+              if (drillActive && showItem) {
+                // Bakerst i dokumentrekkefølgen først, så barn er avgjort før
+                // foreldrene spør etter dem.
+                for (let k = subRows.length - 1; k >= 0; k--) {
+                  const sub = subRows[k];
+                  let hit = rowMatchesDrill(
+                    sub,
+                    diffClassFilter,
+                    fieldDifferenceFilter,
+                  );
+                  if (hit) sub.classList.add("drill-hit");
+                  if (!hit) {
+                    hit = [...sub.querySelectorAll(".subcheckpoint-row")].some(
+                      (d) => subVisible.get(d),
+                    );
+                  }
+                  subVisible.set(sub, hit);
+                }
+
+                const selfHit = rowMatchesDrill(
+                  item,
+                  diffClassFilter,
+                  fieldDifferenceFilter,
+                );
+                if (selfHit) item.classList.add("drill-hit");
+                const anySubHit = subRows.some((s) => subVisible.get(s));
+                if (!selfHit && !anySubHit) showItem = false;
               }
 
               item.style.display = showItem ? "block" : "none";
               if (showItem) {
                 visibleItems++;
                 visibleStats[status] = (visibleStats[status] || 0) + 1;
+              }
+
+              // Vis bare de undersjekkpunktene som er relevante, og åpne veien
+              // fram til dem, slik at avviket er synlig uten manuell klikking.
+              if (drillActive) {
+                subRows.forEach((sub) => {
+                  sub.style.display =
+                    !showItem || subVisible.get(sub) ? "" : "none";
+                });
+                if (showItem) revealDrillHits(item, fieldDifferenceFilter);
+              } else {
+                subRows.forEach((sub) => {
+                  sub.style.display = "";
+                });
               }
 
               // Auto-expand when the match is inside a subcheckpoint
@@ -2751,7 +4119,7 @@
               const ts = tg.querySelector(".theme-stats");
               if (ts) ts.innerHTML = statsBadges(visible.length, tstats, true);
               tg.style.display = visible.length ? "block" : "none";
-              if (visible.length && searchFilter) {
+              if (visible.length && (searchFilter || drillActive)) {
                 const tc = tg.querySelector(".theme-content");
                 const th = tg.querySelector(".theme-header");
                 if (tc) tc.classList.add("expanded");
@@ -2769,8 +4137,9 @@
             const statsDiv = leftSide.querySelector(".category-stats");
             statsDiv.innerHTML = statsBadges(visibleItems, visibleStats, false);
 
-            // Auto-expand category when search matches inside it
-            if (searchFilter && visibleItems > 0) {
+            // Åpne kategorien når søket eller drill-down har treff inne i den,
+            // ellers ligger treffene skjult bak et lukket kategorifelt.
+            if ((searchFilter || drillActive) && visibleItems > 0) {
               const content =
                 categoryElement.querySelector(".category-content");
               const catHeader =
@@ -2788,6 +4157,7 @@
           categoryElement.style.display = showCategory ? "block" : "none";
         });
 
+        updateDrillBanner();
         syncState();
       }
 
@@ -2860,6 +4230,18 @@
           }
         });
 
+        // En aktiv drill-down skal fortsatt være åpen etter at visningsmodus
+        // endres, ellers forsvinner treffene brukeren nettopp navigerte til.
+        if (
+          document.getElementById("diffClassFilter").value ||
+          document.getElementById("fieldDifferenceFilter").value
+        ) {
+          const field = document.getElementById("fieldDifferenceFilter").value;
+          document
+            .querySelectorAll("#results .item-row")
+            .forEach((item) => revealDrillHits(item, field));
+        }
+
         syncState();
       }
 
@@ -2868,6 +4250,7 @@
           { id: "categoryFilter", groupId: "categoryFilterGroup" },
           { id: "statusFilter", groupId: "statusFilterGroup" },
           { id: "searchFilter", groupId: "searchFilterGroup" },
+          { id: "diffClassFilter", groupId: "diffClassFilterGroup" },
           {
             id: "fieldDifferenceFilter",
             groupId: "fieldDifferenceFilterGroup",
@@ -2956,10 +4339,12 @@
         document.getElementById("statusFilter").selectedIndex = 0;
         document.getElementById("searchFilter").value = "";
         document.getElementById("fieldDifferenceFilter").selectedIndex = 0;
+        document.getElementById("diffClassFilter").selectedIndex = 0;
         document.getElementById("expandModeFilter").selectedIndex = 0;
 
         applyFilters();
         applyExpandMode();
+        updateDrillBanner();
       }
 
       function exportDifferences() {
