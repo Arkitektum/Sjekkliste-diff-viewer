@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dokumentasjon – DIBK Sjekkliste Forskjellsvisning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* DIBK-inspirerte farger – speiler verktøyet. */
+        --primary: #23639a;
+        --primary-dark: #27435f;
+        --primary-light: #e6f2ff;
+        --secondary: #00a9a5;
+        --grey-50: #f8fafc;
+        --grey-100: #f1f5f9;
+        --grey-200: #e2e8f0;
+        --grey-300: #cbd5e1;
+        --grey-500: #64748b;
+        --grey-600: #475569;
+        --grey-700: #334155;
+        --grey-800: #1e293b;
+        --grey-900: #0f172a;
+        --white: #ffffff;
+        --error: #e02e49;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --radius: 8px;
+        --radius-sm: 4px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--grey-50);
+        color: var(--grey-900);
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--primary);
+        color: var(--white);
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: var(--shadow-sm);
+        transition: background 0.2s ease;
+      }
+
+      .back-link:hover {
+        background: var(--primary-dark);
+      }
+
+      .doc {
+        background: var(--white);
+        padding: 40px 48px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--grey-200);
+      }
+
+      @media (max-width: 640px) {
+        .doc {
+          padding: 24px 20px;
+        }
+      }
+
+      .doc h1 {
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+
+      .doc h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin: 36px 0 12px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--grey-200);
+      }
+
+      .doc h3 {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--grey-800);
+        margin: 24px 0 8px;
+      }
+
+      .doc p {
+        margin: 12px 0;
+        color: var(--grey-700);
+      }
+
+      .doc ul,
+      .doc ol {
+        margin: 12px 0 12px 24px;
+        color: var(--grey-700);
+      }
+
+      .doc li {
+        margin: 6px 0;
+      }
+
+      .doc li > ul,
+      .doc li > ol {
+        margin-top: 6px;
+        margin-bottom: 6px;
+      }
+
+      .doc a {
+        color: var(--primary);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(35, 99, 154, 0.35);
+      }
+
+      .doc a:hover {
+        border-bottom-color: var(--primary);
+      }
+
+      .doc strong {
+        color: var(--grey-900);
+        font-weight: 600;
+      }
+
+      .doc code {
+        font-family: "Courier New", monospace;
+        font-size: 0.88em;
+        background: var(--grey-100);
+        border: 1px solid var(--grey-200);
+        border-radius: 3px;
+        padding: 1px 5px;
+        color: var(--primary-dark);
+        word-break: break-word;
+      }
+
+      .doc pre {
+        background: var(--grey-900);
+        color: var(--grey-100);
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        overflow-x: auto;
+        margin: 16px 0;
+      }
+
+      .doc pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+      }
+
+      .doc table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 14px;
+        display: block;
+        overflow-x: auto;
+      }
+
+      .doc th,
+      .doc td {
+        text-align: left;
+        padding: 8px 12px;
+        border: 1px solid var(--grey-200);
+      }
+
+      .doc th {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        font-weight: 600;
+      }
+
+      .doc tr:nth-child(even) td {
+        background: var(--grey-50);
+      }
+
+      .doc blockquote {
+        border-left: 4px solid var(--secondary);
+        background: var(--grey-50);
+        margin: 16px 0;
+        padding: 8px 16px;
+        color: var(--grey-600);
+      }
+
+      .doc hr {
+        border: none;
+        border-top: 1px solid var(--grey-200);
+        margin: 28px 0;
+      }
+
+      .doc img {
+        max-width: 100%;
+      }
+
+      .doc-loading,
+      .doc-error {
+        color: var(--grey-500);
+        padding: 20px 0;
+      }
+
+      .doc-error {
+        color: var(--error);
+      }
+
+      .doc-error a {
+        color: var(--error);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <a class="back-link" href="sjekkliste-diff-viewer.html">
+          ← Tilbake til verktøyet
+        </a>
+      </div>
+
+      <article class="doc" id="doc">
+        <p class="doc-loading">Laster dokumentasjon…</p>
+      </article>
+    </div>
+
+    <!-- Markdown-parser. README.md er én kilde til sannhet; denne siden gjengir
+         den ved kjøretid, slik at dokumentasjonen aldri duplikeres. -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+    <script>
+      const target = document.getElementById("doc");
+
+      // Ved feil (parseren mangler, README ikke funnet, eller åpnet via file://
+      // der fetch blokkeres) – pek brukeren mot README direkte.
+      function showError() {
+        target.innerHTML =
+          '<p class="doc-error">Klarte ikke å laste dokumentasjonen her. ' +
+          'Se <a href="README.md">README.md</a> direkte, eller åpne siden via ' +
+          "GitHub Pages / en lokal webserver (ikke <code>file://</code>).</p>";
+      }
+
+      async function loadDocs() {
+        if (typeof marked === "undefined") {
+          showError();
+          return;
+        }
+        try {
+          const res = await fetch("README.md", { cache: "no-cache" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const md = await res.text();
+          target.innerHTML = marked.parse(md);
+
+          // La en delt lenke med #anker hoppe til riktig overskrift etter render.
+          if (location.hash) {
+            const el = document.getElementById(
+              decodeURIComponent(location.hash.slice(1)),
+            );
+            if (el) el.scrollIntoView();
+          }
+        } catch (e) {
+          console.error("Kunne ikke laste README.md:", e);
+          showError();
+        }
+      }
+
+      loadDocs();
+    </script>
+  </body>
+</html>
