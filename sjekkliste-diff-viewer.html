@@ -193,6 +193,7 @@
       :root {
         --st-identical: #06a261;
         --st-extra: #6366f1;
+        --st-moved: #0891b2;
         --st-changed: #cc8b00;
         --st-missing: #e02e49;
         --st-track: #e8edf3;
@@ -716,6 +717,40 @@
       }
       .status-test-only {
         background: #8b5cf6;
+      }
+      /* Finnes i begge miljø, men på ulikt nivå i hierarkiet. */
+      .status-moved {
+        background: #0891b2;
+      }
+
+      /* Hvor sjekkpunktet ligger i hvert miljø. Ligger over begge kolonnene,
+         siden det gjelder sammenligningen som helhet. */
+      .relocation-note {
+        grid-column: 1 / -1;
+        align-content: start;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+        align-items: baseline;
+        background: #ecfeff;
+        border: 1px solid #0891b2;
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+        margin: 8px 0;
+        font-size: 12px;
+        color: #0e4f5c;
+      }
+
+      .relocation-note strong {
+        color: #0e4f5c;
+      }
+
+      .relocation-note code {
+        font-family: "Courier New", monospace;
+        background: var(--white);
+        border: 1px solid #a5e8f2;
+        border-radius: 3px;
+        padding: 1px 5px;
       }
 
       .item-row[data-status="identical"] .item-header {
@@ -1326,6 +1361,7 @@
               <option value="missing" id="diffClassOptMissing">
                 Mangler helt i test
               </option>
+              <option value="moved">Flyttet i hierarkiet (finnes i begge)</option>
               <option value="deviating">Endret eller mangelfullt innhold</option>
               <option value="extra-only" id="diffClassOptExtra">
                 Kun ekstra innhold i test
@@ -1880,7 +1916,85 @@
           });
         });
 
+        annotateRelocations(result, prodData, testData);
+
         return result;
+      }
+
+      // ---- Flyttede sjekkpunkter --------------------------------------------
+      // Miljøene kan ha samme sjekkpunkt på ulikt nivå i hierarkiet: dev har
+      // f.eks. lagt ET 1.99 under 1.28, mens prod har det på toppnivå. Ren
+      // sammenligning per plassering ville meldt det som «mangler», selv om
+      // sjekkpunktet finnes. Her slås de opp i hele treet på kategori + Id, og
+      // annoteres med hvor de ligger i hvert miljø.
+      function buildNodeIndex(data) {
+        const map = new Map();
+        const visit = (node, cat, path) => {
+          const key = `${cat}|${node.Id}`;
+          if (!map.has(key)) map.set(key, { path, node });
+          (node.Undersjekkpunkter || []).forEach((sub) =>
+            visit(sub, cat, `${path} > ${sub.Id}`),
+          );
+        };
+        if (Array.isArray(data))
+          data.forEach((item) => {
+            const cat = item.Prosesskategori || "Ukjent kategori";
+            visit(item, cat, `${cat} ${item.Id}`);
+          });
+        return map;
+      }
+
+      function annotateRelocations(result, prodData, testData) {
+        const prodIndex = buildNodeIndex(prodData);
+        const testIndex = buildNodeIndex(testData);
+
+        Object.keys(result.categories).forEach((cat) => {
+          const walk = (items, path) => {
+            Object.values(items || {}).forEach((item) => {
+              const here = path ? `${path} > ${item.id}` : `${cat} ${item.id}`;
+              const key = `${cat}|${item.id}`;
+
+              if (item.status === "prodOnly" && testIndex.has(key)) {
+                // Finnes i det høyre miljøet, men et annet sted i treet. Sammenlign
+                // innholdet der det faktisk ligger, slik at «finnes i begge» er
+                // etterprøvd og ikke bare antatt.
+                const target = testIndex.get(key);
+                const cmp = compareItems(item.prodItem, target.node);
+                // Bruk samme vurdering som ellers, slik at rene tillegg i dev
+                // ikke framstår som avvik bare fordi punktet er flyttet.
+                const verdict = classifyItem({
+                  status: "different",
+                  differences: cmp.differences,
+                });
+                item.relocated = {
+                  direction: "moved",
+                  leftPath: here,
+                  rightPath: target.path,
+                  identical: cmp.identical,
+                  hasProblem: verdict.problemFields.length > 0,
+                  problemFields: verdict.problemFields,
+                  differences: cmp.differences,
+                  testItem: target.node,
+                };
+              } else if (item.status === "testOnly" && prodIndex.has(key)) {
+                // Dette er stedet sjekkpunktet er flyttet TIL. Det er allerede
+                // rapportert der fasiten har det, så det er ikke et nytt
+                // sjekkpunkt.
+                item.relocated = {
+                  direction: "moved-here",
+                  leftPath: prodIndex.get(key).path,
+                  rightPath: here,
+                };
+              }
+
+              const sub = (item.differences || []).find(
+                (d) => d.field === "Undersjekkpunkter" && d.subResult,
+              );
+              if (sub) walk(sub.subResult.subItems, here);
+            });
+          };
+          walk(result.categories[cat].items, "");
+        });
       }
 
       function groupByCategory(data) {
@@ -2228,7 +2342,10 @@
         };
 
         let cls;
-        if (item.status === "prodOnly") cls = "missing";
+        if (item.relocated) {
+          // Finnes i begge miljø, men på ulikt nivå. Ikke et manglende punkt.
+          cls = item.relocated.direction === "moved" ? "moved" : "moved-here";
+        } else if (item.status === "prodOnly") cls = "missing";
         else if (item.status === "testOnly") cls = "dev-only";
         else {
           let anyDiff = false;
@@ -2307,11 +2424,13 @@
           identical: 0,
           extraOnly: 0,
           deviating: 0,
+          moved: 0,
           missing: 0,
           extraCheckpoints: 0,
         };
         const fields = {};
         const cats = {};
+        let movedChanged = 0;
 
         const bumpField = (field, kind, n) => {
           if (!n) return;
@@ -2326,6 +2445,7 @@
             identical: 0,
             extraOnly: 0,
             deviating: 0,
+            moved: 0,
             missing: 0,
             extraCheckpoints: 0,
           });
@@ -2340,8 +2460,16 @@
                 return;
               }
 
+              // Stedet et sjekkpunkt er flyttet TIL. Det er samme sjekkpunkt som
+              // rapporteres der fasiten har det, så det skal ikke telles igjen.
+              if (r.cls === "moved-here") return;
+
               c.total++;
-              if (r.cls === "missing") {
+              if (r.cls === "moved") {
+                c.moved++;
+                totals.moved++;
+                if (item.relocated && item.relocated.hasProblem) movedChanged++;
+              } else if (r.cls === "missing") {
                 c.missing++;
                 totals.missing++;
               } else if (r.cls === "deviating") {
@@ -2376,12 +2504,14 @@
           totals.identical +
           totals.extraOnly +
           totals.deviating +
+          totals.moved +
           totals.missing;
+        // Flyttede sjekkpunkter finnes i begge miljø, så de regnes som ivaretatt.
         const conform = base
-          ? ((totals.identical + totals.extraOnly) / base) * 100
+          ? ((totals.identical + totals.extraOnly + totals.moved) / base) * 100
           : 0;
 
-        return { totals, fields, cats, base, conform };
+        return { totals, fields, cats, base, conform, movedChanged };
       }
 
       function renderStatistics(stats) {
@@ -2395,8 +2525,17 @@
         document.getElementById("statsHeroLabel").textContent =
           `samsvar med ${leftLabel()}`;
         document.getElementById("statsPct").textContent = fmtPct(conform);
-        document.getElementById("statsHeroNote").textContent =
-          `${totals.identical + totals.extraOnly} av ${base} sjekkpunkter i ${leftLabel()} er ivaretatt i ${rightLabel()}.`;
+        let heroNote =
+          `${totals.identical + totals.extraOnly + totals.moved} av ${base} sjekkpunkter i ${leftLabel()} er ivaretatt i ${rightLabel()}.`;
+        if (totals.moved) {
+          const changedMoved = stats.movedChanged || 0;
+          heroNote +=
+            ` ${totals.moved} av dem ligger et annet sted i hierarkiet` +
+            (changedMoved
+              ? ` – ${changedMoved} av disse har også avvik som må rettes.`
+              : ", med innholdet ivaretatt.");
+        }
+        document.getElementById("statsHeroNote").textContent = heroNote;
 
         const meter = document.getElementById("statsMeter");
         meter.style.width = `${Math.max(0, Math.min(100, conform))}%`;
@@ -2422,6 +2561,12 @@
             label: `Kun ekstra i ${rightLabel()}`,
           },
           {
+            key: "moved",
+            n: totals.moved,
+            color: "var(--st-moved)",
+            label: "Flyttet i hierarkiet",
+          },
+          {
             key: "deviating",
             n: totals.deviating,
             color: "var(--st-changed)",
@@ -2439,6 +2584,7 @@
         const drillCls = {
           identical: "identical",
           extraOnly: "extra-only",
+          moved: "moved",
           deviating: "deviating",
           missing: "missing",
         };
@@ -2546,7 +2692,7 @@
               cat: c,
               ...v,
               conform: v.total
-                ? ((v.identical + v.extraOnly) / v.total) * 100
+                ? ((v.identical + v.extraOnly + v.moved) / v.total) * 100
                 : 100,
             };
           })
@@ -2574,6 +2720,7 @@
             const bar = [
               { n: c.identical, col: "var(--st-identical)" },
               { n: c.extraOnly, col: "var(--st-extra)" },
+              { n: c.moved, col: "var(--st-moved)" },
               { n: c.deviating, col: "var(--st-changed)" },
               { n: c.missing, col: "var(--st-missing)" },
             ]
@@ -2932,6 +3079,19 @@
             break;
         }
 
+        // Sjekkpunktet finnes i begge miljø, bare på ulikt nivå. Da er «kun i
+        // prod» misvisende – si at det er flyttet, og vis hvor.
+        if (itemData.relocated) {
+          const rel = itemData.relocated;
+          statusBadge.className = "item-status-badge status-moved";
+          statusBadge.textContent =
+            rel.direction === "moved"
+              ? rel.hasProblem
+                ? "↷ Flyttet + avvik"
+                : "↷ Flyttet"
+              : "↷ Flyttet hit";
+        }
+
         header.appendChild(leftSide);
         header.appendChild(statusBadge);
 
@@ -2967,7 +3127,19 @@
         prodColumn.innerHTML = `<div class="env-title">${leftLabel()}</div>`;
         testColumn.innerHTML = `<div class="env-title">${rightLabel()}</div>`;
 
-        if (itemData.status === "prodOnly") {
+        // Forklar plasseringen i begge miljø før innholdet.
+        if (itemData.relocated)
+          details.appendChild(createRelocationNote(itemData.relocated));
+
+        if (itemData.relocated && itemData.relocated.direction === "moved") {
+          // Sjekkpunktet finnes – sammenlign mot der det faktisk ligger i dev,
+          // i stedet for å melde «ikke funnet».
+          (itemData.relocated.differences || []).forEach((diff) => {
+            const fieldElement = createFieldDifference(diff);
+            prodColumn.appendChild(fieldElement.prod);
+            testColumn.appendChild(fieldElement.test);
+          });
+        } else if (itemData.status === "prodOnly") {
           prodColumn.appendChild(createItemDetails(itemData.prodItem));
           testColumn.innerHTML +=
             '<div style="color: #e74c3c; font-style: italic; padding: 15px;">Ikke funnet</div>';
@@ -3120,6 +3292,19 @@
             break;
         }
 
+        // Sjekkpunktet finnes i begge miljø, bare på ulikt nivå. Da er «kun i
+        // prod» misvisende – si at det er flyttet, og vis hvor.
+        if (subItemData.relocated) {
+          const rel = subItemData.relocated;
+          statusBadge.className = "item-status-badge status-moved";
+          statusBadge.textContent =
+            rel.direction === "moved"
+              ? rel.hasProblem
+                ? "↷ Flyttet + avvik"
+                : "↷ Flyttet"
+              : "↷ Flyttet hit";
+        }
+
         header.appendChild(left);
         header.appendChild(statusBadge);
 
@@ -3177,6 +3362,25 @@
         }
 
         return row;
+      }
+
+      // Viser at sjekkpunktet finnes i begge miljø, og hvor det ligger i hvert.
+      function createRelocationNote(rel) {
+        const note = document.createElement("div");
+        note.className = "relocation-note";
+        const verdict =
+          rel.direction === "moved-here"
+            ? `Dette er plasseringen i ${rightLabel()}. Sammenligningen er rapportert der ${leftLabel()} har sjekkpunktet.`
+            : rel.hasProblem
+              ? `Innholdet har også avvik som må rettes: ${rel.problemFields.join(", ")}.`
+              : "Innholdet er ivaretatt på den nye plasseringen.";
+        note.innerHTML =
+          `<strong>Finnes i begge miljø, men på ulikt nivå.</strong>` +
+          `<span>${escapeHtml(leftLabel())}: <code>${escapeHtml(rel.leftPath)}</code></span>` +
+          `<span>→</span>` +
+          `<span>${escapeHtml(rightLabel())}: <code>${escapeHtml(rel.rightPath)}</code></span>` +
+          `<span>${escapeHtml(verdict)}</span>`;
+        return note;
       }
 
       function createItemDetails(item) {
@@ -3832,6 +4036,7 @@
       const DIFF_CLASS_TEXT = {
         "must-fix": () => "må rettes",
         missing: () => `mangler i ${rightLabel()}`,
+        moved: () => "flyttet i hierarkiet",
         deviating: () => "endret eller mangelfullt innhold",
         "extra-only": () => `kun ekstra innhold i ${rightLabel()}`,
         "dev-only": () => `finnes bare i ${rightLabel()}`,
