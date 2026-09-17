@@ -1242,6 +1242,21 @@
             box-shadow: var(--shadow-sm);
           "
         >
+          <div class="filter-group" id="sjekklisteGroup" style="margin: 0">
+            <label for="sjekklisteSelect">Sjekkliste:</label>
+            <select id="sjekklisteSelect">
+              <option value="bygg" selected>DiBK Bygg</option>
+              <option value="arbeidstilsynet">Arbeidstilsynet</option>
+            </select>
+          </div>
+          <span
+            style="
+              padding-bottom: 10px;
+              font-weight: 600;
+              color: var(--primary-dark);
+            "
+            >·</span
+          >
           <div class="filter-group" id="leftEnvGroup" style="margin: 0">
             <label for="leftEnv">Sammenlign (fasit):</label>
             <select id="leftEnv">
@@ -1557,27 +1572,45 @@
     </div>
 
     <script>
+      // Sjekklistene verktøyet kan sammenligne. Hver sjekkliste har sitt eget
+      // API per miljø, men samme datamodell (Id, Navn, Tema, Prosesskategori,
+      // Undersjekkpunkter, ...), så resten av verktøyet er felles.
+      const SJEKKLISTER = {
+        bygg: {
+          label: "DiBK Bygg",
+          urls: {
+            prod: "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste",
+            test: "https://sjekkliste-bygg-api.ft-test.dibk.no/api/sjekkliste",
+            dev: "https://sjekkliste-bygg-api.ft-dev.dibk.no/api/sjekkliste",
+          },
+        },
+        arbeidstilsynet: {
+          label: "Arbeidstilsynet",
+          urls: {
+            prod: "https://sjekkliste-arbeidstilsynet-api.ft.dibk.no/api/sjekkliste",
+            test: "https://sjekkliste-arbeidstilsynet-api.ft-test.dibk.no/api/sjekkliste",
+            dev: "https://sjekkliste-arbeidstilsynet-api.ft-dev.dibk.no/api/sjekkliste",
+          },
+        },
+      };
+
       // Available environments. The "left" environment acts as the source of
       // truth (fasit); the "right" environment is compared against it.
       const ENVIRONMENTS = {
-        prod: {
-          label: "Prod",
-          url: "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste",
-        },
-        test: {
-          label: "Test",
-          url: "https://sjekkliste-bygg-api.ft-test.dibk.no/api/sjekkliste",
-        },
-        dev: {
-          label: "Dev",
-          url: "https://sjekkliste-bygg-api.ft-dev.dibk.no/api/sjekkliste",
-        },
+        prod: { label: "Prod" },
+        test: { label: "Test" },
+        dev: { label: "Dev" },
       };
+
+      // Currently selected sjekkliste.
+      let sjekkliste = "bygg";
 
       // Currently selected environments (left = source of truth, right = compared).
       let leftEnv = "prod";
       let rightEnv = "test";
 
+      const sjekklisteLabel = () => SJEKKLISTER[sjekkliste].label;
+      const envUrl = (env) => SJEKKLISTER[sjekkliste].urls[env];
       const leftLabel = () => ENVIRONMENTS[leftEnv].label;
       const rightLabel = () => ENVIRONMENTS[rightEnv].label;
 
@@ -1628,11 +1661,39 @@
         .getElementById("groupByTemaToggle")
         .addEventListener("change", onGroupByTemaChange);
       document
+        .getElementById("sjekklisteSelect")
+        .addEventListener("change", onSjekklisteChange);
+      document
         .getElementById("leftEnv")
         .addEventListener("change", () => onEnvChange("leftEnv"));
       document
         .getElementById("rightEnv")
         .addEventListener("change", () => onEnvChange("rightEnv"));
+
+      // Bytte av sjekkliste gjør et allerede lastet resultat ugyldig: tallene
+      // og radene hører til den forrige sjekklisten. Nullstill visningen slik
+      // at ingenting fra forrige sjekkliste blir stående og se gyldig ut.
+      function onSjekklisteChange() {
+        sjekkliste = document.getElementById("sjekklisteSelect").value;
+        prodData = null;
+        testData = null;
+        comparisonData = null;
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("summary").style.display = "none";
+        document.getElementById("statsPanel").style.display = "none";
+        document.getElementById("error").style.display = "none";
+        document.querySelector(".filters").style.display = "none";
+        document.getElementById("expandAll").disabled = true;
+        document.getElementById("collapseAll").disabled = true;
+        document.getElementById("exportDiff").disabled = true;
+
+        // Kategori- og feltlistene er bygget fra den forrige sjekklisten, så de
+        // tømmes. De øvrige filtrene er uavhengige av sjekkliste og beholdes.
+        updateCategoryFilter([]);
+        updateFieldDifferenceFilter({});
+        updateDrillBanner();
+        syncState();
+      }
 
       // Keep the two environment selectors from pointing at the same environment.
       function onEnvChange(changedId) {
@@ -1683,6 +1744,7 @@
 
       function currentState() {
         return {
+          ds: document.getElementById("sjekklisteSelect").value,
           left: document.getElementById("leftEnv").value,
           right: document.getElementById("rightEnv").value,
           group: document.getElementById("groupByTemaToggle").checked
@@ -1702,6 +1764,7 @@
       function syncState() {
         const s = currentState();
         const params = new URLSearchParams();
+        params.set("ds", s.ds);
         params.set("left", s.left);
         params.set("right", s.right);
         if (s.group === "1") params.set("group", "1");
@@ -1730,6 +1793,7 @@
         let s = {};
         if ([...params.keys()].length) {
           s = {
+            ds: params.get("ds"),
             left: params.get("left"),
             right: params.get("right"),
             group: params.get("group"),
@@ -1753,6 +1817,7 @@
           const el = document.getElementById(id);
           if ([...el.options].some((o) => o.value === val)) el.value = val;
         };
+        setSelect("sjekklisteSelect", s.ds);
         setSelect("leftEnv", s.left);
         setSelect("rightEnv", s.right);
         if (s.group != null) {
@@ -1769,6 +1834,7 @@
         // må settes etterpå.
         pendingSelection = { cat: s.cat || "", field: s.field || "" };
 
+        sjekkliste = document.getElementById("sjekklisteSelect").value;
         leftEnv = document.getElementById("leftEnv").value;
         rightEnv = document.getElementById("rightEnv").value;
         updateEnvLabels();
@@ -1781,12 +1847,13 @@
         const error = document.getElementById("error");
         const loadButton = document.getElementById("loadData");
 
-        // Read the current environment selection.
+        // Read the current sjekkliste and environment selection.
+        sjekkliste = document.getElementById("sjekklisteSelect").value;
         leftEnv = document.getElementById("leftEnv").value;
         rightEnv = document.getElementById("rightEnv").value;
         updateEnvLabels();
 
-        loading.textContent = `Laster data fra ${leftLabel()} og ${rightLabel()}...`;
+        loading.textContent = `Laster ${sjekklisteLabel()} fra ${leftLabel()} og ${rightLabel()}...`;
         loading.style.display = "block";
         error.style.display = "none";
         loadButton.disabled = true;
@@ -1799,14 +1866,14 @@
         try {
           // Load data from both selected endpoints
           const [prodResponse, testResponse] = await Promise.all([
-            fetch(ENVIRONMENTS[leftEnv].url, {
+            fetch(envUrl(leftEnv), {
               method: "GET",
               mode: "cors",
               headers: {
                 Accept: "application/json",
               },
             }),
-            fetch(ENVIRONMENTS[rightEnv].url, {
+            fetch(envUrl(rightEnv), {
               method: "GET",
               mode: "cors",
               headers: {
@@ -1869,7 +1936,7 @@
           // failure when hosting the tool on a different origin than the API.
           if (err instanceof TypeError) {
             error.textContent =
-              `Klarte ikke å hente data fra ${leftLabel()}/${rightLabel()}. ` +
+              `Klarte ikke å hente ${sjekklisteLabel()} fra ${leftLabel()}/${rightLabel()}. ` +
               `Trolig CORS eller nettverk: sjekk at API-et tillater origin ` +
               `${location.origin}, og at du har tilgang til det valgte miljøet. ` +
               `(Teknisk: ${err.message || "Failed to fetch"})`;
@@ -4644,6 +4711,9 @@
 
         const data = {
           timestamp: new Date().toISOString(),
+          sjekkliste: sjekklisteLabel(),
+          fasit: leftLabel(),
+          miljo: rightLabel(),
           summary: comparisonData.summary,
           differences: differences,
         };
@@ -4654,7 +4724,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `sjekkliste-api-diff-${new Date().toISOString().split("T")[0]}.json`;
+        a.download = `sjekkliste-api-diff-${sjekkliste}-${new Date().toISOString().split("T")[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

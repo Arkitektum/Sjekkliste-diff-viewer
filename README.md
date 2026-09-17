@@ -1,13 +1,25 @@
 # Sjekkliste-diff-viewer
 
-Verktøy for å se ulikheter mellom sjekklistene i de ulike miljøene til DIBK sitt
-sjekkliste-API (`sjekkliste-bygg-api`). Hele verktøyet er én selvstendig
-HTML-fil ([sjekkliste-diff-viewer.html](sjekkliste-diff-viewer.html)) uten
-byggesteg eller avhengigheter – den henter data direkte fra API-ene i nettleseren.
+Verktøy for å se ulikheter mellom sjekklistene i de ulike miljøene til DIBK sine
+sjekkliste-API-er. Hele verktøyet er én selvstendig HTML-fil
+([sjekkliste-diff-viewer.html](sjekkliste-diff-viewer.html)) uten byggesteg
+eller avhengigheter – den henter data direkte fra API-ene i nettleseren.
+
+Verktøyet støtter flere sjekklister:
+
+| Sjekkliste | API |
+| ---------- | --- |
+| **DiBK Bygg** | `sjekkliste-bygg-api` |
+| **Arbeidstilsynet** | `sjekkliste-arbeidstilsynet-api` |
+
+Sjekklistene har samme datamodell (`Id`, `Navn`, `Tema`, `Prosesskategori`,
+`Undersjekkpunkter` osv.), så all sammenligning, statistikk og filtrering
+fungerer likt uansett hvilken sjekkliste som er valgt.
 
 Miljøene som kan sammenlignes er **Prod**, **Test** og **Dev**. Øverst i
-verktøyet velger du hvilke to miljøer som skal sammenlignes: det venstre
-miljøet fungerer som fasit, og det høyre sammenlignes mot det.
+verktøyet velger du først **sjekkliste**, deretter hvilke to miljøer som skal
+sammenlignes: det venstre miljøet fungerer som fasit, og det høyre
+sammenlignes mot det.
 
 ## Publisert versjon
 
@@ -19,24 +31,39 @@ Siden oppdateres automatisk hver gang endringer pushes til `main`-grenen.
 
 ## Slik bruker du det
 
-1. Velg **fasit** (venstre) og **miljø** (høyre) som skal sammenlignes. De to
+1. Velg hvilken **sjekkliste** du vil sammenligne (DiBK Bygg eller
+   Arbeidstilsynet).
+2. Velg **fasit** (venstre) og **miljø** (høyre) som skal sammenlignes. De to
    velgerne kan ikke peke på samme miljø.
-2. Klikk **Last inn data**. Verktøyet henter begge sjekklistene samtidig fra
+3. Klikk **Last inn data**. Verktøyet henter begge sjekklistene samtidig fra
    API-ene og bygger sammenligningen.
-3. Bla gjennom resultatet, bruk statistikken til å drille inn på avvik, og
+4. Bla gjennom resultatet, bruk statistikken til å drille inn på avvik, og
    filtrer/søk etter behov.
 
-Valgene dine (miljøer, filtre, søk, visning) lagres i URL-en og i nettleseren,
-slik at en lenke kan deles og gjenskape akkurat den visningen – og slik at
-tilstanden huskes til neste besøk.
+Bytter du sjekkliste, nullstilles et allerede innlastet resultat – tallene og
+radene hører til den forrige sjekklisten. Klikk **Last inn data** på nytt.
+
+Valgene dine (sjekkliste, miljøer, filtre, søk, visning) lagres i URL-en og i
+nettleseren, slik at en lenke kan deles og gjenskape akkurat den visningen – og
+slik at tilstanden huskes til neste besøk.
 
 ### API-endepunkter
+
+**DiBK Bygg**
 
 | Miljø | Endepunkt |
 | ----- | --------- |
 | Prod | `https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste` |
 | Test | `https://sjekkliste-bygg-api.ft-test.dibk.no/api/sjekkliste` |
 | Dev  | `https://sjekkliste-bygg-api.ft-dev.dibk.no/api/sjekkliste` |
+
+**Arbeidstilsynet**
+
+| Miljø | Endepunkt |
+| ----- | --------- |
+| Prod | `https://sjekkliste-arbeidstilsynet-api.ft.dibk.no/api/sjekkliste` |
+| Test | `https://sjekkliste-arbeidstilsynet-api.ft-test.dibk.no/api/sjekkliste` |
+| Dev  | `https://sjekkliste-arbeidstilsynet-api.ft-dev.dibk.no/api/sjekkliste` |
 
 Fordi dataene hentes direkte fra nettleseren, må API-et tillate `CORS` for den
 origin verktøyet kjøres fra, og du må ha tilgang til det valgte miljøet. Hvis
@@ -95,6 +122,7 @@ lastingen feiler får du en beskjed som peker på nettopp dette.
 
 ### Eksport
 
-- **Eksporter forskjeller** laster ned en JSON-fil (`sjekkliste-api-diff-
-  <dato>.json`) med tidsstempel, oppsummering og alle sjekkpunkter som ikke er
-  identiske.
+- **Eksporter forskjeller** laster ned en JSON-fil
+  (`sjekkliste-api-diff-<sjekkliste>-<dato>.json`) med tidsstempel, hvilken
+  sjekkliste og hvilke miljøer som ble sammenlignet, oppsummering og alle
+  sjekkpunkter som ikke er identiske.
