@@ -1199,6 +1199,721 @@
       .subcheckpoint-row[data-status="testOnly"] {
         border-left-color: #8b5cf6;
       }
+
+      /* ---- Visningsvalg: sammenligning eller kvalitetsanalyse ------------ */
+      .mode-tabs,
+      .sub-tabs {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        border-bottom: 2px solid var(--grey-200);
+        margin-bottom: 24px;
+      }
+
+      .sub-tabs {
+        margin: 20px 0 0;
+      }
+
+      .mode-tabs button,
+      .sub-tabs button {
+        background: transparent;
+        color: var(--grey-600);
+        box-shadow: none;
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .mode-tabs button:hover:not(:disabled),
+      .sub-tabs button:hover:not(:disabled) {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        box-shadow: none;
+        transform: none;
+      }
+
+      .mode-tabs button[aria-selected="true"],
+      .sub-tabs button[aria-selected="true"] {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+        background: var(--white);
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      /* ---- Kvalitetsanalyse ------------------------------------------------ */
+      :root {
+        --rs-ok: var(--st-identical);
+        --rs-fix: var(--st-changed);
+        --rs-manual: var(--st-missing);
+        --rs-cross: var(--st-extra);
+        --rs-info: var(--grey-400);
+      }
+
+      .a-env {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: var(--primary-light);
+        border: 1px solid var(--primary);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .a-empty {
+        background: var(--white);
+        border: 1px dashed var(--grey-300);
+        border-radius: var(--radius);
+        padding: 28px;
+        text-align: center;
+        color: var(--grey-600);
+      }
+
+      .a-filters {
+        align-items: flex-end;
+      }
+
+      .a-filters .a-grow {
+        flex: 1 1 260px;
+      }
+
+      .a-filters select {
+        max-width: 320px;
+      }
+
+      .a-check label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        padding-bottom: 10px;
+      }
+
+      .a-check input {
+        width: auto;
+      }
+
+      .a-link-btn {
+        background: transparent;
+        color: var(--primary);
+        box-shadow: none;
+        padding: 10px 4px;
+        text-decoration: underline;
+      }
+
+      .a-link-btn:hover:not(:disabled) {
+        background: transparent;
+        color: var(--primary-dark);
+        box-shadow: none;
+        transform: none;
+      }
+
+      /* Fasit-kortet: alltid synlig øverst, grønn kant = «slik skal det være». */
+      .a-fasit-card {
+        background: var(--white);
+        border: 1px solid var(--grey-200);
+        border-left: 6px solid var(--success);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px 24px;
+        margin-bottom: 24px;
+      }
+
+      .a-fasit-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .a-fasit-head h2 {
+        font-size: 20px;
+        color: var(--grey-900);
+      }
+
+      .a-fasit-tag {
+        background: var(--success);
+        color: var(--white);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        padding: 3px 9px;
+        border-radius: var(--radius-sm);
+      }
+
+      .a-fasit-intro {
+        margin-bottom: 14px;
+        color: var(--grey-700);
+      }
+
+      /* Under hverandre, så hvert mønster får plass på én linje. */
+      .a-kinds {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+
+      .a-kind {
+        border: 1px solid #bbf7d0;
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        background: var(--white);
+      }
+
+      .a-kind p {
+        font-size: 13px;
+        color: var(--grey-700);
+        margin-bottom: 10px;
+      }
+
+      .a-kind .a-fasit-model {
+        margin-bottom: 8px;
+        padding: 12px;
+      }
+
+      .a-kind .a-fasit-model {
+        row-gap: 10px;
+      }
+
+      .a-kind .a-fasit-part {
+        max-width: none;
+      }
+
+      .a-kind .a-fasit-part code {
+        font-size: 13.5px;
+        padding: 3px 6px;
+      }
+
+      .a-kind-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .a-kind-head h3 {
+        font-size: 16px;
+        color: var(--grey-900);
+      }
+
+      .a-kind-no {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--success);
+        color: var(--white);
+        font-weight: 700;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .a-kind-read {
+        font-style: italic;
+        color: var(--grey-600) !important;
+        margin: 0 !important;
+      }
+
+      .a-fasit-sub {
+        font-size: 15px;
+        margin: 4px 0 6px;
+        color: var(--grey-800);
+      }
+
+      .a-kind-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: var(--radius-lg);
+        border: 1px solid;
+        white-space: nowrap;
+        margin-left: 4px;
+      }
+
+      .a-kind-badge.kind-vurdering {
+        color: var(--primary-dark);
+        border-color: var(--primary);
+        background: var(--primary-light);
+      }
+
+      .a-kind-badge.kind-preutfylling {
+        color: #6b21a8;
+        border-color: #a855f7;
+        background: #f5edff;
+      }
+
+      .a-fasit-tag-sm {
+        font-size: 9.5px;
+        padding: 1px 6px;
+        margin-left: 6px;
+        vertical-align: 1px;
+      }
+
+      /* Mønsteret stykket opp, med forklaring under hver del. */
+      .a-fasit-model {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 4px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 18px;
+      }
+
+      .a-fasit-part {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 190px;
+      }
+
+      .a-fasit-part code {
+        font-size: 20px;
+        font-weight: 700;
+        background: var(--white);
+        border: 1px solid #bbf7d0;
+        color: #14532d;
+        padding: 4px 8px;
+        white-space: pre;
+      }
+
+      .a-fasit-part.a-fasit-var code {
+        color: var(--primary);
+        border-style: dashed;
+        border-color: var(--primary);
+      }
+
+      .a-fasit-part small {
+        font-size: 11.5px;
+        color: var(--grey-600);
+        line-height: 1.35;
+        margin-top: 6px;
+      }
+
+      .a-fasit-examples {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .a-fasit-examples th {
+        text-align: left;
+        font-size: 12px;
+        color: var(--grey-600);
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--grey-300);
+      }
+
+      .a-fasit-examples td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--grey-200);
+        vertical-align: top;
+      }
+
+      .a-fasit-examples td:nth-child(2) code {
+        background: #dcfce7;
+        color: #14532d;
+      }
+
+      .a-fasit-examples td:nth-child(3) code {
+        background: #fdecef;
+        color: #9b1c30;
+      }
+
+      .a-fasit-note {
+        margin-top: 14px;
+        font-size: 12.5px;
+        color: var(--grey-600);
+      }
+
+      .a-fasit-more {
+        margin-top: 10px;
+      }
+
+      .a-fasit-more > summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--primary);
+        padding: 6px 0;
+      }
+
+      .a-fasit-more p {
+        margin: 10px 0;
+      }
+
+      /* Hele fasit-teksten for én regel, med endringen under. */
+      .a-fasit-text {
+        display: block;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: var(--radius-sm);
+        padding: 4px 8px;
+        color: #14532d;
+        font-weight: 600;
+      }
+
+      .a-change {
+        display: block;
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--grey-500);
+      }
+
+      .a-change .a-code {
+        font-size: 11.5px;
+      }
+
+      @media (max-width: 900px) {
+        .a-fasit-examples thead {
+          display: none;
+        }
+        .a-fasit-examples tr,
+        .a-fasit-examples td {
+          display: block;
+        }
+        .a-fasit-examples td:first-child {
+          font-weight: 600;
+          padding-bottom: 0;
+          border: none;
+        }
+        .a-fasit-part code {
+          font-size: 16px;
+        }
+      }
+
+      .a-grammar,
+      .a-code {
+        font-family: "Courier New", monospace;
+        font-size: 12.5px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .a-grammar {
+        background: var(--grey-50);
+        border: 1px solid var(--grey-200);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        overflow-x: auto;
+      }
+
+      code {
+        font-family: "Courier New", monospace;
+        font-size: 0.95em;
+        background: var(--grey-100);
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+
+      .a-list-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 0 0 10px;
+        color: var(--grey-600);
+        font-size: 13px;
+      }
+
+      .a-diff-legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .a-table-wrap {
+        background: var(--white);
+        border: 1px solid var(--grey-200);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow-x: auto;
+        margin-bottom: 24px;
+      }
+
+      .a-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .a-table th {
+        position: sticky;
+        top: 0;
+        background: var(--grey-100);
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--grey-600);
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--grey-300);
+        white-space: nowrap;
+      }
+
+      .a-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--grey-200);
+        vertical-align: top;
+      }
+
+      .a-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .a-table td.a-rule {
+        min-width: 220px;
+        max-width: 420px;
+      }
+
+      .a-loc {
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--grey-800);
+      }
+
+      .a-name {
+        color: var(--grey-600);
+        font-size: 12px;
+        max-width: 280px;
+      }
+
+      .a-muted {
+        color: var(--grey-500);
+        font-weight: 400;
+        font-size: 12px;
+      }
+
+      .a-owners {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        max-width: 300px;
+      }
+
+      .a-owner {
+        font-size: 11px;
+        background: var(--grey-100);
+        border: 1px solid var(--grey-200);
+        border-radius: 3px;
+        padding: 0 5px;
+        white-space: nowrap;
+      }
+
+      .a-status {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: var(--radius-lg);
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--white);
+        white-space: nowrap;
+      }
+
+      .a-status.rs-ok {
+        background: var(--rs-ok);
+      }
+      .a-status.rs-fixable {
+        background: #a87200;
+      }
+      .a-status.rs-manual {
+        background: var(--rs-manual);
+      }
+
+      .a-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .a-chip {
+        display: inline-block;
+        font-size: 11.5px;
+        line-height: 1.4;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid;
+        background: var(--white);
+        cursor: help;
+      }
+
+      .a-chip.sev-fix {
+        border-color: var(--rs-fix);
+        color: #7a5200;
+        background: #fff8e6;
+      }
+      .a-chip.sev-manual,
+      .a-chip.sev-error {
+        border-color: var(--rs-manual);
+        color: #9b1c30;
+        background: #fdecef;
+      }
+      .a-chip.sev-cross {
+        border-color: var(--rs-cross);
+        color: #3730a3;
+        background: #eef0ff;
+      }
+      .a-chip.sev-warn {
+        border-color: #d97706;
+        color: #92400e;
+        background: #fff4e5;
+      }
+      .a-chip.sev-info {
+        border-color: var(--grey-300);
+        color: var(--grey-600);
+        background: var(--grey-50);
+      }
+
+      .ws-mark {
+        color: #b45309;
+        background: #fff3bf;
+        border-radius: 2px;
+        font-weight: 700;
+      }
+
+      .rd-del {
+        background: #fdecef;
+        color: #9b1c30;
+        text-decoration: line-through;
+        text-decoration-thickness: 2px;
+        border-radius: 2px;
+      }
+
+      .rd-ins {
+        background: #dcfce7;
+        color: #14532d;
+        font-weight: 700;
+        border-radius: 2px;
+        box-shadow: inset 0 -2px 0 #16a34a;
+      }
+
+      .a-ok-text {
+        color: var(--success);
+        font-weight: 600;
+      }
+
+      .a-manual-text {
+        color: #9b1c30;
+        font-size: 12px;
+      }
+
+      .a-flag-note {
+        margin-top: 14px;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-left: 4px solid var(--rs-cross);
+        background: #eef0ff;
+        border-radius: var(--radius-sm);
+        color: var(--grey-700);
+      }
+
+      .a-mini-stack {
+        display: flex;
+        height: 10px;
+        width: 140px;
+        gap: 1px;
+        border-radius: 3px;
+        overflow: hidden;
+        background: var(--st-track);
+      }
+
+      .a-mini-stack > div {
+        height: 100%;
+      }
+
+      .a-group {
+        background: var(--white);
+        border: 1px solid var(--grey-200);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 16px;
+      }
+
+      .a-group > summary {
+        cursor: pointer;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-weight: 600;
+        color: var(--grey-800);
+      }
+
+      .a-group > summary .a-muted {
+        font-weight: 400;
+      }
+
+      .a-group .a-table-wrap {
+        border: none;
+        border-top: 1px solid var(--grey-200);
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: none;
+        margin: 0;
+      }
+
+      .a-more {
+        padding: 10px 18px;
+        font-size: 12px;
+        color: var(--grey-500);
+      }
+
+      .a-status + .a-loc,
+      .a-status + .a-owners {
+        margin-top: 6px;
+      }
+
+      /* Smal skjerm: hver rad blir et kort, med kolonnenavnet over verdien. */
+      @media (max-width: 900px) {
+        .a-table thead {
+          display: none;
+        }
+        .a-table,
+        .a-table tbody,
+        .a-table tr,
+        .a-table td {
+          display: block;
+          width: 100%;
+        }
+        .a-table tr {
+          border-bottom: 1px solid var(--grey-300);
+          padding: 6px 0;
+        }
+        .a-table td {
+          border-bottom: none;
+          padding: 6px 14px;
+        }
+        .a-table td.a-rule {
+          min-width: 0;
+          max-width: none;
+        }
+        .a-table td[data-label]::before {
+          content: attr(data-label);
+          display: block;
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--grey-500);
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+          margin-bottom: 2px;
+        }
+        .a-name {
+          max-width: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1226,6 +1941,30 @@
         >
       </div>
 
+      <div class="mode-tabs" role="tablist" aria-label="Visning">
+        <button
+          type="button"
+          role="tab"
+          id="modeCompare"
+          data-view="compare"
+          aria-selected="true"
+          aria-controls="compareView"
+        >
+          🔀 Sammenlign miljøer
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="modeAnalyse"
+          data-view="analyse"
+          aria-selected="false"
+          aria-controls="analysisView"
+        >
+          🧪 Kvalitetsanalyse
+        </button>
+      </div>
+
+      <div id="compareView" role="tabpanel" aria-labelledby="modeCompare">
       <div class="controls">
         <div
           class="env-selector"
@@ -1569,6 +2308,266 @@
       </div>
 
       <div id="results"></div>
+      </div>
+
+      <!-- Kvalitetsanalyse: én sjekkliste fra ett miljø, uten sammenligning
+           av hele datasettet. Fylles av analyse-skriptet nederst. -->
+      <div
+        id="analysisView"
+        role="tabpanel"
+        aria-labelledby="modeAnalyse"
+        hidden
+      >
+        <div class="controls">
+          <div class="env-selector a-env">
+            <div class="filter-group" style="margin: 0">
+              <label for="aDs">Sjekkliste:</label>
+              <select id="aDs">
+                <option value="bygg" selected>DiBK Bygg</option>
+                <option value="arbeidstilsynet">Arbeidstilsynet</option>
+              </select>
+            </div>
+            <div class="filter-group" style="margin: 0">
+              <label for="aEnv">Miljø som analyseres:</label>
+              <select id="aEnv">
+                <option value="prod" selected>Prod</option>
+                <option value="test">Test</option>
+                <option value="dev">Dev</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button id="aLoad">Analyser</button>
+            <button id="aExportCsv" disabled>Eksporter utvalg (CSV)</button>
+            <button id="aExportJson" disabled>Eksporter alle funn (JSON)</button>
+          </div>
+
+          <div class="sub-tabs" role="tablist" aria-label="Analyse">
+            <button
+              type="button"
+              role="tab"
+              id="aTabRules"
+              data-tab="rules"
+              aria-selected="true"
+              aria-controls="aRulesPanel"
+            >
+              Maskinlesbare regler
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="aTabContent"
+              data-tab="content"
+              aria-selected="false"
+              aria-controls="aContentPanel"
+            >
+              Innholdskvalitet
+            </button>
+          </div>
+        </div>
+
+        <div id="aLoading" class="loading" style="display: none"></div>
+        <div id="aError" class="error" style="display: none"></div>
+        <div id="aEmpty" class="a-empty">
+          Velg sjekkliste og miljø, og klikk <strong>Analyser</strong>.
+          Verktøyet sjekker Regel-feltet mot fasiten og ser etter andre
+          uregelmessigheter i innholdet.
+        </div>
+
+        <section id="aRulesPanel" role="tabpanel" aria-labelledby="aTabRules">
+          <div class="a-fasit-card" id="aFasit">
+            <div class="a-fasit-head">
+              <span class="a-fasit-tag">FASIT</span>
+              <h2>Slik skal en regel skrives</h2>
+            </div>
+            <p class="a-fasit-intro">
+              En regel har alltid formen <code>If (betingelse) then (utfall)</code>.
+              Det finnes <strong>to gyldige regeltyper</strong>, og det er utfallet som skiller dem:
+            </p>
+            <div class="a-kinds">
+              <div class="a-kind">
+                <div class="a-kind-head"><span class="a-kind-no">1</span><h3>Peker på sjekkpunkt</h3></div>
+                <p>Når betingelsen er oppfylt, blir sjekkpunktet <strong>aktuelt og skal vurderes</strong>.
+                  Utfallet er bare sjekkpunktets Id.</p>
+                <div class="a-fasit-model">
+                  <span class="a-fasit-part"><code>If (</code></span>
+                  <span class="a-fasit-part a-fasit-var"><code>1.73 = true</code><small>betingelse</small></span>
+                  <span class="a-fasit-part"><code>) then (</code></span>
+                  <span class="a-fasit-part a-fasit-var"><code>1.28</code><small>sjekkpunktet som skal vurderes</small></span>
+                  <span class="a-fasit-part"><code>)</code></span>
+                </div>
+                <p class="a-kind-read">Leses: «Hvis 1.73 er ja, skal 1.28 vurderes.»</p>
+              </div>
+              <div class="a-kind">
+                <div class="a-kind-head"><span class="a-kind-no">2</span><h3>Preutfylling</h3></div>
+                <p>Når betingelsen er oppfylt, kan sjekkpunktet <strong>besvart</strong> med
+                  verdien i utfallet. Brukes normalt på sjekkpunkter av typen <code>Auto</code>.</p>
+                <div class="a-fasit-model">
+                  <span class="a-fasit-part"><code>If (</code></span>
+                  <span class="a-fasit-part a-fasit-var"><code>norskSvenskDansk = true</code><small>betingelse, ofte et datafelt</small></span>
+                  <span class="a-fasit-part"><code>) then (</code></span>
+                  <span class="a-fasit-part a-fasit-var"><code>1.1 = true</code><small>sjekkpunktet og svaret det får</small></span>
+                  <span class="a-fasit-part"><code>)</code></span>
+                </div>
+                <p class="a-kind-read">Leses: «Hvis norskSvenskDansk er ja, besvares 1.1 med ja.»</p>
+              </div>
+            </div>
+            <h3 class="a-fasit-sub">Skrivemåte – gjelder begge typene</h3>
+            <table class="a-fasit-examples">
+              <thead>
+                <tr><th>Krav</th><th>✓ Fasit</th><th>✗ Finnes i dag</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Ingen linjeskift eller mellomrom før/etter</td>
+                  <td><code>If (1.73 = true) then (1.28)</code></td>
+                  <td><code>If (1.73 = true) then (1.28)<span class="ws-mark">↵</span></code></td></tr>
+                <tr><td>Ett mellomrom rundt <code>=</code>, <code>&amp;</code> og <code>||</code></td>
+                  <td><code>If (3.55 = true) then (3.57)</code></td>
+                  <td><code>If (3.55= true) then (3.57)</code></td></tr>
+                <tr><td>Hele betingelsen i én parentes</td>
+                  <td><code>If (8.8 = false &amp; 8.10 = false) then (8.12)</code></td>
+                  <td><code>If (8.8 = false) &amp; (8.10 = false) then (8.12)</code></td></tr>
+                <tr><td>Hvert ledd har egen <code>= true</code>/<code>= false</code></td>
+                  <td><code>If (1.26 = true || 1.27 = true) then (1.25 = true)</code></td>
+                  <td><code>If (1.26 || 1.27 = true) then (1.25 = true)</code></td></tr>
+                <tr><td>Blandes <code>&amp;</code> og <code>||</code>: parentes rundt gruppen</td>
+                  <td><code>If (2.12 = false &amp; (3.13 = true || 3.20 = true)) then (2.9)</code></td>
+                  <td><code>If (1.20 &amp; 1.21 || 1.22 = true) then 1.108</code></td></tr>
+                <tr><td>Datafelt i camelCase</td>
+                  <td><code>If (tegningNyPlan = true) then (1.79 = true)</code></td>
+                  <td><code>If (TegningNyPlan = true) then (1.79 = true)</code></td></tr>
+                <tr><td>Én regel per felt – ikke begge typene i samme felt</td>
+                  <td><code>If (1.74 = true) then (1.76)</code> og, i 1.42: <code>If (1.76 = true) then (1.42 = true)</code></td>
+                  <td><code>If (1.74 = true) then (1.76) &amp; (1.76 = true) then (1.42 = true)</code></td></tr>
+                <tr><td>Utfallet er ett sjekkpunkt-Id</td>
+                  <td><code>If (3.1 = true) then (3.2)</code></td>
+                  <td><code>If (3.47 = true) then (RKO)</code>, <code>Vedlagt underskjema</code></td></tr>
+              </tbody>
+            </table>
+            <p class="a-fasit-note">
+              Det finnes ingen vedtatt standard for Regel-feltet. Fasiten er tolket
+              fra skrivemåten flest regler allerede bruker.
+            </p>
+            <details class="a-fasit-more">
+              <summary>Vurderinger og alle avvikstyper</summary>
+              <pre class="a-grammar">
+Regel         = "If (" Betingelse ") then (" Utfall ")"
+Utfall        = Sjekkpunkt-Id                        peker på sjekkpunkt: skal vurderes
+              | Sjekkpunkt-Id " = " ("true" | "false")   preutfylling: besvares automatisk
+Betingelse    = Ledd { (" &amp; " | " || ") Ledd }      – blandes &amp; og ||: parentes rundt gruppene
+Ledd          = (Sjekkpunkt-Id | datafelt) " = " ("true" | "false")
+Sjekkpunkt-Id = tall "." tall                        f.eks. 1.28
+datafelt      = camelCase                            f.eks. norskSvenskDansk</pre>
+              <p>
+                <strong>Følger fasit</strong> – regelen er skrevet nøyaktig slik.
+                <strong>Kan rettes automatisk</strong> – regelen er entydig, og
+                verktøyet viser hvordan den skal stå.
+                <strong>Må vurderes manuelt</strong> – fritekst, flere regler i
+                ett felt eller uklar logikk som et menneske må ta stilling til.
+                <strong>Kryssjekk</strong> – regelen er lesbar, men stemmer ikke
+                med resten av sjekklisten.
+              </p>
+              <table class="stats-table" id="aCodeTable"></table>
+            </details>
+          </div>
+
+          <div id="aRuleSummary" class="stats-panel" style="display: none"></div>
+
+          <div class="filters a-filters" id="aRuleFilters" style="display: none">
+            <div class="filter-group a-grow">
+              <label for="aRuleQ">Søk (Id, navn eller regeltekst):</label>
+              <input type="text" id="aRuleQ" placeholder="f.eks. 1.73 eller RKO" />
+            </div>
+            <div class="filter-group">
+              <label for="aRuleStatus">Vurdering:</label>
+              <select id="aRuleStatus">
+                <option value="">Alle</option>
+                <option value="problems">Alle med funn</option>
+                <option value="ok">Følger fasit</option>
+                <option value="fixable">Kan rettes automatisk</option>
+                <option value="manual">Må vurderes manuelt</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="aRuleCode">Avvik:</label>
+              <select id="aRuleCode"><option value="">Alle avvik</option></select>
+            </div>
+            <div class="filter-group">
+              <label for="aRuleCat">Prosesskategori:</label>
+              <select id="aRuleCat"><option value="">Alle kategorier</option></select>
+            </div>
+            <div class="filter-group">
+              <label for="aRulePattern">Mønster:</label>
+              <select id="aRulePattern"><option value="">Alle mønstre</option></select>
+            </div>
+            <div class="filter-group">
+              <label for="aRuleKind">Regeltype:</label>
+              <select id="aRuleKind">
+                <option value="">Alle typer</option>
+                <option value="vurdering">Peker på sjekkpunkt</option>
+                <option value="preutfylling">Preutfylling</option>
+                <option value="none">Ukjent (kan ikke tolkes)</option>
+              </select>
+            </div>
+            <div class="filter-group a-check">
+              <label>
+                <input type="checkbox" id="aRuleUnique" />
+                Slå sammen like regler
+              </label>
+            </div>
+            <div class="filter-group a-check">
+              <button type="button" class="a-link-btn" id="aRuleReset">
+                Nullstill filter
+              </button>
+            </div>
+          </div>
+          <div id="aRuleList"></div>
+        </section>
+
+        <section
+          id="aContentPanel"
+          role="tabpanel"
+          aria-labelledby="aTabContent"
+          hidden
+        >
+          <div id="aContentSummary" class="stats-panel" style="display: none"></div>
+          <div
+            class="filters a-filters"
+            id="aContentFilters"
+            style="display: none"
+          >
+            <div class="filter-group a-grow">
+              <label for="aContentQ">Søk (Id, navn eller verdi):</label>
+              <input type="text" id="aContentQ" placeholder="f.eks. pbl eller 1.12" />
+            </div>
+            <div class="filter-group">
+              <label for="aContentCheck">Kontroll:</label>
+              <select id="aContentCheck"><option value="">Alle kontroller</option></select>
+            </div>
+            <div class="filter-group">
+              <label for="aContentSev">Alvorlighet:</label>
+              <select id="aContentSev">
+                <option value="">Alle</option>
+                <option value="error">Feil</option>
+                <option value="warn">Bør sjekkes</option>
+                <option value="fix">Kan rettes automatisk</option>
+                <option value="info">Til informasjon</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="aContentCat">Prosesskategori:</label>
+              <select id="aContentCat"><option value="">Alle kategorier</option></select>
+            </div>
+            <div class="filter-group a-check">
+              <button type="button" class="a-link-btn" id="aContentReset">
+                Nullstill filter
+              </button>
+            </div>
+          </div>
+          <div id="aContentList"></div>
+        </section>
+      </div>
     </div>
 
     <script>
@@ -1774,6 +2773,9 @@
         if (s.cls) params.set("cls", s.cls);
         if (s.cat) params.set("cat", s.cat);
         if (s.field) params.set("field", s.field);
+        // Kvalitetsanalysen (eget skript lenger ned) legger til sine egne
+        // parametere, slik at én lenke gjenskaper begge visningene.
+        if (typeof analysisUrlParams === "function") analysisUrlParams(params);
         const query = params.toString();
         history.replaceState(
           null,
@@ -4730,6 +5732,1865 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }
+    </script>
+
+    <script>
+      // =====================================================================
+      // Kvalitetsanalyse
+      // Analyserer én sjekkliste fra ett miljø: Regel-feltet vurderes mot en
+      // tolket fasit, og resten av innholdet sjekkes for uregelmessigheter.
+      // Delene mellom @@engine-start og @@engine-end er ren logikk uten DOM,
+      // slik at de kan kjøres og testes for seg.
+      // =====================================================================
+
+      // @@engine-start
+
+      // ---- Regelmotor ------------------------------------------------------
+      // Det finnes ingen vedtatt standard for Regel-feltet. Fasiten er tolket
+      // fra skrivemåten flest regler allerede bruker:
+      //   If (<betingelse>) then (<sjekkpunkt-Id>)
+      //   betingelse = ledd { " & " | " || " ledd }  (blandes & og ||: parentes)
+      //   ledd       = (<sjekkpunkt-Id> | <datafelt i camelCase>) " = " true|false
+      // sev: fix = entydig, kan rettes automatisk; manual = må vurderes av et
+      // menneske; cross = lesbar regel som ikke stemmer med resten av listen.
+      const RULE_ISSUES = {
+        EMPTY: {
+          sev: "fix",
+          label: "Tom regel",
+          help: "Feltet inneholder bare mellomrom eller linjeskift og bør tømmes.",
+        },
+        TRIM: {
+          sev: "fix",
+          label: "Linjeskift/mellomrom i start eller slutt",
+          help: "Regelen har mellomrom eller linjeskift før eller etter selve teksten.",
+        },
+        SPACING: {
+          sev: "fix",
+          label: "Mellomrom rundt tegn",
+          help: "Fasit: ett mellomrom rundt =, & og ||, og ingen mellomrom innenfor parentesene.",
+        },
+        KEYWORD_CASE: {
+          sev: "fix",
+          label: "Store/små bokstaver i nøkkelord",
+          help: "Fasit: If, then, true og false.",
+        },
+        OPERATOR_FORM: {
+          sev: "fix",
+          label: "Operator skrevet annerledes",
+          help: "Fasit: & for «og», || for «eller» og = for «er lik».",
+        },
+        PARENS_STYLE: {
+          sev: "fix",
+          label: "Parentes rundt betingelsen",
+          help: "Fasit: hele betingelsen i én parentes, f.eks. If (8.8 = false & 8.10 = false) then (8.12).",
+        },
+        OUTCOME_PARENS: {
+          sev: "fix",
+          label: "Utfall uten parentes",
+          help: "Fasit: utfallet står i parentes, f.eks. then (1.108).",
+        },
+        SHORTHAND: {
+          sev: "fix",
+          label: "Ledd uten «= true/false» (tolket)",
+          help: "F.eks. (1.26 || 1.27 = true). Forslaget antar at verdien gjelder alle leddene – bør bekreftes.",
+        },
+        FIELD_CASE: {
+          sev: "fix",
+          label: "Datafelt ikke i camelCase",
+          help: "De fleste datafelt skrives i camelCase (norskSvenskDansk). Sjekk navnet mot datamodellen før du retter.",
+        },
+        OTHER_FORM: {
+          sev: "fix",
+          label: "Annen avvikende skrivemåte",
+          help: "Regelen er lesbar, men skrevet annerledes enn fasit.",
+        },
+        FREE_TEXT: {
+          sev: "manual",
+          label: "Fritekst, ikke maskinlesbar",
+          help: "Regelen starter ikke med If og kan ikke tolkes maskinelt.",
+        },
+        MULTI_RULE: {
+          sev: "manual",
+          label: "Flere regler i ett felt",
+          help: "Feltet har flere If/then, ofte en vurderingsregel og en preutfyllingsregel sammen. Del dem opp, én regel per felt.",
+        },
+        MIXED_OPERATORS: {
+          sev: "manual",
+          label: "& og || blandet uten parentes",
+          help: "Det er uklart hva som hører sammen. Sett parentes rundt gruppene.",
+        },
+        UNBALANCED_PARENS: {
+          sev: "manual",
+          label: "Parentesene går ikke opp",
+          help: "Antall ( og ) er ulikt, eller en ) kommer før tilhørende (.",
+        },
+        NON_ID_TARGET: {
+          sev: "manual",
+          label: "Utfallet er ikke ett sjekkpunkt-Id",
+          help: "F.eks. (RKO), (MKV) eller (4.6/FA). Fasit er ett sjekkpunkt-Id.",
+        },
+        CODE_REF: {
+          sev: "manual",
+          label: "Kode eller tall i betingelsen",
+          help: "F.eks. BP, RP eller 35 – verken sjekkpunkt-Id eller datafelt.",
+        },
+        NON_BOOL_VALUE: {
+          sev: "manual",
+          label: "Verdien er ikke true/false",
+          help: "F.eks. kodeverdi = KP. Fasiten har bare true og false.",
+        },
+        SYNTAX: {
+          sev: "manual",
+          label: "Syntaksfeil",
+          help: "Regelen kan ikke tolkes.",
+        },
+        DANGLING_REF: {
+          sev: "cross",
+          label: "Peker på sjekkpunkt som ikke finnes",
+          help: "Id-en finnes ikke i samme prosesskategori.",
+        },
+        TARGET_NOT_SELF: {
+          sev: "cross",
+          label: "Utfallet er et annet sjekkpunkt",
+          help: "Nesten alle regler har sjekkpunktets egen Id som utfall. Denne vurderer eller preutfyller et annet sjekkpunkt – kan være riktig, men er ofte en skrivefeil.",
+        },
+        TYPE_MISMATCH: {
+          sev: "cross",
+          label: "Regeltype passer ikke sjekkpunkttypen",
+          help: "Preutfylling (then (x = true)) står normalt på Auto-sjekkpunkter, og Auto-sjekkpunkter har normalt preutfylling. Kan være riktig, men bør sjekkes.",
+        },
+        SELF_CONDITION: {
+          sev: "cross",
+          label: "Betingelsen bruker utfallet selv",
+          help: "Sjekkpunktet i utfallet står også i betingelsen.",
+        },
+        CYCLE: {
+          sev: "cross",
+          label: "Sirkulær avhengighet",
+          help: "Reglene i prosesskategorien avhenger av hverandre i ring.",
+        },
+        FLAG_MISMATCH: {
+          sev: "cross",
+          label: "HarMaskinlesbarRegel stemmer ikke",
+          help: "Flagget er true, men regelen er ikke maskinlesbar.",
+        },
+      };
+
+      const RULE_STATUS = {
+        ok: { label: "Følger fasit", color: "var(--rs-ok)" },
+        fixable: { label: "Kan rettes automatisk", color: "var(--rs-fix)" },
+        manual: { label: "Må vurderes manuelt", color: "var(--rs-manual)" },
+      };
+
+      const SEV_LABEL = {
+        fix: "Kan rettes",
+        manual: "Manuell",
+        cross: "Kryssjekk",
+        error: "Feil",
+        warn: "Bør sjekkes",
+        info: "Info",
+      };
+
+      function ruleTokens(src) {
+        const re =
+          /\s+|\|\||&&|==|[()&|=;]|\d+(?:\.\d+)+|\d+|[A-Za-zÆØÅæøå_][A-Za-zÆØÅæøå0-9_]*(?:\/[A-Za-zÆØÅæøå0-9_]+)*|[\s\S]/g;
+        const out = [];
+        let m;
+        while ((m = re.exec(src))) {
+          const t = m[0];
+          let type;
+          if (/^\s+$/.test(t)) type = "ws";
+          else if (t === "(") type = "lp";
+          else if (t === ")") type = "rp";
+          else if (t === "&" || t === "&&") type = "and";
+          else if (t === "||" || t === "|") type = "or";
+          else if (t === "=" || t === "==") type = "eq";
+          else if (t === ";") type = "semi";
+          else if (/^\d+(\.\d+)+$/.test(t)) type = "id";
+          else if (/^\d+$/.test(t)) type = "num";
+          else if (/^if$/i.test(t)) type = "if";
+          else if (/^then$/i.test(t)) type = "then";
+          else if (/^(true|false)$/i.test(t)) type = "bool";
+          else if (/^[A-Za-zÆØÅæøå_]/.test(t)) type = "ident";
+          else type = "other";
+          out.push({ type, text: t });
+        }
+        return out;
+      }
+
+      function canonicalToken(t) {
+        switch (t.type) {
+          case "if":
+            return "If";
+          case "then":
+            return "then";
+          case "bool":
+            return t.text.toLowerCase();
+          case "and":
+            return "&";
+          case "or":
+            return "||";
+          case "eq":
+            return "=";
+          default:
+            return t.text;
+        }
+      }
+
+      // Fasitens mellomrom: ett mellomrom mellom alle tegn, unntatt rett
+      // etter ( og rett før ) og ;.
+      function joinRuleTokens(toks, canonical) {
+        let s = "";
+        toks.forEach((t, i) => {
+          if (i > 0) {
+            const prev = toks[i - 1];
+            // Ukjente tegn (f.eks. / i 4.6/FA) står tett, slik de er skrevet.
+            if (
+              !(prev.type === "lp" || t.type === "rp" || t.type === "semi" ||
+                prev.type === "other" || t.type === "other")
+            )
+              s += " ";
+          }
+          s += canonical ? canonicalToken(t) : t.text;
+        });
+        return s;
+      }
+
+      // Strukturen uten konkrete Id-er og felt, slik at like regler grupperes.
+      function rulePattern(toks) {
+        return joinRuleTokens(
+          toks.map((t) => {
+            if (t.type === "id") return { type: "id", text: "ID" };
+            if (t.type === "num") return { type: "num", text: "tall" };
+            if (t.type === "ident")
+              return {
+                type: "ident",
+                text: /^[A-ZÆØÅ0-9]+$/.test(t.text) ? "KODE" : "felt",
+              };
+            return { type: t.type, text: canonicalToken(t) };
+          }),
+          false,
+        );
+      }
+
+      function closingIndex(toks, open) {
+        let depth = 0;
+        for (let i = open; i < toks.length; i++) {
+          if (toks[i].type === "lp") depth++;
+          else if (toks[i].type === "rp" && --depth === 0) return i;
+        }
+        return -1;
+      }
+
+      function parseRuleCondition(toks) {
+        let i = 0;
+        const peek = () => toks[i];
+        function expr() {
+          const items = [operand()];
+          const ops = new Set();
+          while (i < toks.length && (peek().type === "and" || peek().type === "or")) {
+            ops.add(peek().type);
+            i++;
+            items.push(operand());
+          }
+          if (items.length === 1) return items[0];
+          if (ops.size > 1) return { type: "mixed", items };
+          return { type: "op", op: [...ops][0], items };
+        }
+        function operand() {
+          const t = peek();
+          if (!t) throw new Error("betingelsen slutter for tidlig");
+          if (t.type === "lp") {
+            i++;
+            const e = expr();
+            if (!peek() || peek().type !== "rp") throw new Error("mangler «)»");
+            i++;
+            return { type: "group", expr: e };
+          }
+          if (t.type === "id" || t.type === "ident" || t.type === "num") {
+            i++;
+            const ref = { kind: t.type, text: t.text };
+            if (peek() && peek().type === "eq") {
+              i++;
+              const v = peek();
+              if (!v || !["bool", "ident", "num", "id"].includes(v.type))
+                throw new Error("mangler verdi etter «=»");
+              i++;
+              return { type: "cmp", ref, value: { kind: v.type, text: v.text } };
+            }
+            return { type: "cmp", ref, value: null };
+          }
+          throw new Error(`uventet «${t.text}» i betingelsen`);
+        }
+        const e = expr();
+        if (i < toks.length) throw new Error(`uventet «${toks[i].text}» i betingelsen`);
+        return e;
+      }
+
+      function checkRuleCondition(cond, add, res) {
+        if (cond.type !== "group") add("PARENS_STYLE");
+        const visit = (n, parentOp, top) => {
+          if (n.type === "group") {
+            if (
+              !top &&
+              (n.expr.type === "cmp" ||
+                (n.expr.type === "op" && n.expr.op === parentOp))
+            )
+              add("PARENS_STYLE");
+            visit(n.expr, parentOp, false);
+            return;
+          }
+          if (n.type === "mixed") {
+            add("MIXED_OPERATORS");
+            n.items.forEach((c) => visit(c, null, false));
+            return;
+          }
+          if (n.type === "op") {
+            // (1.26 || 1.27 = true): verdien står bare på siste ledd.
+            const known = [...n.items]
+              .reverse()
+              .find((c) => c.type === "cmp" && c.value && c.value.kind === "bool");
+            n.items.forEach((c) => {
+              if (c.type === "cmp" && !c.value) {
+                const v = known ? known.value.text.toLowerCase() : "true";
+                add("SHORTHAND", `${c.ref.text} = ${v}`);
+                c.value = { kind: "bool", text: v, inferred: true };
+              }
+            });
+            n.items.forEach((c) => visit(c, n.op, false));
+            return;
+          }
+          // Ett ledd
+          if (!n.value) {
+            add("SHORTHAND", `${n.ref.text} = true`);
+            n.value = { kind: "bool", text: "true", inferred: true };
+          }
+          const r = n.ref;
+          if (r.kind === "num" || (r.kind === "ident" && /^[A-ZÆØÅ0-9]+$/.test(r.text)))
+            add("CODE_REF", r.text);
+          else if (r.kind === "ident" && /^[A-ZÆØÅ][a-zæøå]/.test(r.text)) {
+            r.fixed = r.text[0].toLowerCase() + r.text.slice(1);
+            add("FIELD_CASE", `${r.text} → ${r.fixed}`);
+          }
+          if (r.kind === "id") res.condIds.push(r.text);
+          if (n.value.kind !== "bool") add("NON_BOOL_VALUE", `${r.text} = ${n.value.text}`);
+        };
+        visit(cond, null, true);
+      }
+
+      function printRuleCondition(n, parentOp) {
+        if (n.type === "group") return printRuleCondition(n.expr, parentOp);
+        if (n.type === "cmp") {
+          const v = n.value.kind === "bool" ? n.value.text.toLowerCase() : n.value.text;
+          return `${n.ref.fixed || n.ref.text} = ${v}`;
+        }
+        const sep = n.op === "and" ? " & " : " || ";
+        const s = n.items.map((c) => printRuleCondition(c, n.op)).join(sep);
+        return parentOp && parentOp !== n.op ? `(${s})` : s;
+      }
+
+      // To regeltyper, skilt på utfallet:
+      //   then (1.28)         vurdering    – sjekkpunktet skal vurderes
+      //   then (1.1 = true)   preutfylling – sjekkpunktet besvares automatisk
+      function parseRuleOutcome(toks, add) {
+        const wrapped =
+          toks.length >= 2 && toks[0].type === "lp" && closingIndex(toks, 0) === toks.length - 1;
+        const t = wrapped ? toks.slice(1, -1) : toks;
+        let out = null;
+        if (t.length === 1 && t[0].type === "id")
+          out = { target: t[0].text, kind: "vurdering", value: null };
+        else if (t.length === 3 && t[0].type === "id" && t[1].type === "eq" && t[2].type === "bool")
+          out = { target: t[0].text, kind: "preutfylling", value: t[2].text.toLowerCase() };
+        if (!out) {
+          add("NON_ID_TARGET", toks.length ? joinRuleTokens(toks) : "(mangler)");
+          return null;
+        }
+        if (!wrapped) add("OUTCOME_PARENS");
+        return out;
+      }
+
+      const RULE_KIND = {
+        vurdering: { label: "Peker på sjekkpunkt", help: "then (Id): sjekkpunktet blir aktuelt og skal vurderes når betingelsen er oppfylt." },
+        preutfylling: { label: "Preutfylling", help: "then (Id = true/false): sjekkpunktet besvares automatisk når betingelsen er oppfylt." },
+      };
+
+      function finishRule(res) {
+        const sevs = res.issues.map((i) => RULE_ISSUES[i.code].sev);
+        res.status = sevs.includes("manual") ? "manual" : sevs.includes("fix") ? "fixable" : "ok";
+        if (res.status === "manual") res.suggestion = null;
+        else if (res.suggestion !== null && res.suggestion !== res.raw && res.status === "ok") {
+          // Sikkerhetsnett: forslaget avviker, men ingen regel over fanget det.
+          res.issues.push({ code: "OTHER_FORM", detail: "" });
+          res.status = "fixable";
+        } else if (res.status === "ok") res.suggestion = null;
+        return res;
+      }
+
+      function analyseRule(raw) {
+        const res = {
+          raw,
+          status: "ok",
+          issues: [],
+          suggestion: null,
+          pattern: "",
+          ids: [],
+          fields: [],
+          condIds: [],
+          target: null,
+          kind: null,
+        };
+        const add = (code, detail) => {
+          const hit = res.issues.find((x) => x.code === code);
+          if (!hit) res.issues.push({ code, detail: detail || "" });
+          else if (detail && !hit.detail.split(", ").includes(detail))
+            hit.detail = hit.detail ? `${hit.detail}, ${detail}` : detail;
+        };
+
+        const trimmed = raw.trim();
+        if (!trimmed) {
+          add("EMPTY");
+          res.pattern = "(tom)";
+          res.suggestion = "";
+          return finishRule(res);
+        }
+        if (trimmed !== raw) add("TRIM");
+
+        const toks = ruleTokens(trimmed).filter((t) => t.type !== "ws");
+        toks.forEach((t) => {
+          if (t.type === "id") res.ids.push(t.text);
+          if (t.type === "ident") res.fields.push(t.text);
+        });
+        if (toks[0].type !== "if") {
+          add("FREE_TEXT");
+          res.pattern = "(fritekst)";
+          return finishRule(res);
+        }
+        res.pattern = rulePattern(toks);
+
+        if (
+          toks.some(
+            (t) =>
+              (t.type === "if" || t.type === "then" || t.type === "bool") &&
+              t.text !== canonicalToken(t),
+          )
+        )
+          add("KEYWORD_CASE");
+        if (
+          toks.some(
+            (t) =>
+              (t.type === "and" || t.type === "or" || t.type === "eq") &&
+              t.text !== canonicalToken(t),
+          )
+        )
+          add("OPERATOR_FORM");
+        const unknown = toks.find((t) => t.type === "other");
+        if (!unknown && joinRuleTokens(toks, false) !== trimmed) add("SPACING");
+
+        let depth = 0,
+          balanced = true;
+        for (const t of toks) {
+          if (t.type === "lp") depth++;
+          else if (t.type === "rp" && --depth < 0) balanced = false;
+        }
+        if (depth !== 0) balanced = false;
+        if (!balanced) {
+          add("UNBALANCED_PARENS");
+          return finishRule(res);
+        }
+
+        const ifs = toks.filter((t) => t.type === "if").length;
+        const thens = toks.filter((t) => t.type === "then").length;
+        if (ifs > 1 || thens > 1 || toks.some((t) => t.type === "semi")) {
+          add("MULTI_RULE", `${Math.max(ifs, thens)} × If/then`);
+          return finishRule(res);
+        }
+        const ti = toks.findIndex((t) => t.type === "then");
+        if (ti < 0) {
+          add("SYNTAX", "mangler «then»");
+          return finishRule(res);
+        }
+        if (unknown) {
+          // Et ukjent tegn i betingelsen gjør den uleselig; i utfallet fanges
+          // det som «ikke ett sjekkpunkt-Id» under.
+          if (toks.indexOf(unknown) < ti) {
+            add("SYNTAX", `ukjent tegn «${unknown.text}»`);
+            return finishRule(res);
+          }
+        }
+
+        let cond;
+        try {
+          cond = parseRuleCondition(toks.slice(1, ti));
+        } catch (e) {
+          add("SYNTAX", e.message);
+          return finishRule(res);
+        }
+        checkRuleCondition(cond, add, res);
+        const out = parseRuleOutcome(toks.slice(ti + 1), add);
+        if (out) {
+          res.target = out.target;
+          res.kind = out.kind;
+        }
+
+        if (res.issues.some((i) => RULE_ISSUES[i.code].sev === "manual"))
+          return finishRule(res);
+        const outcome = out.kind === "preutfylling" ? `${out.target} = ${out.value}` : out.target;
+        res.suggestion = `If (${printRuleCondition(cond, null)}) then (${outcome})`;
+        return finishRule(res);
+      }
+
+      // ---- Sjekklistemodell ------------------------------------------------
+      function flattenChecklist(data) {
+        const out = [];
+        const walk = (list, parent, depth) =>
+          (Array.isArray(list) ? list : []).forEach((n) => {
+            const info = {
+              node: n,
+              cat: n.Prosesskategori || (parent && parent.cat) || "(ukjent)",
+              id: n.Id == null ? "" : String(n.Id),
+              parentId: parent ? parent.id : "",
+              depth,
+              parent,
+            };
+            out.push(info);
+            walk(n.Undersjekkpunkter, info, depth + 1);
+          });
+        walk(data, null, 0);
+        return out;
+      }
+
+      const nodeKey = (n) => `${n.cat}|${n.parentId}|${n.id}`;
+
+      // Sterkt sammenhengende komponenter (Tarjan) for å finne ringer.
+      function stronglyConnected(graph) {
+        let index = 0;
+        const idx = new Map(),
+          low = new Map(),
+          onStack = new Set(),
+          stack = [],
+          comps = [];
+        const strong = (v) => {
+          idx.set(v, index);
+          low.set(v, index);
+          index++;
+          stack.push(v);
+          onStack.add(v);
+          (graph.get(v) || []).forEach((w) => {
+            if (!idx.has(w)) {
+              strong(w);
+              low.set(v, Math.min(low.get(v), low.get(w)));
+            } else if (onStack.has(w)) low.set(v, Math.min(low.get(v), idx.get(w)));
+          });
+          if (low.get(v) === idx.get(v)) {
+            const comp = [];
+            let w;
+            do {
+              w = stack.pop();
+              onStack.delete(w);
+              comp.push(w);
+            } while (w !== v);
+            comps.push(comp);
+          }
+        };
+        [...graph.keys()].forEach((v) => {
+          if (!idx.has(v)) strong(v);
+        });
+        return comps;
+      }
+
+      function analyseRules(data) {
+        const nodes = flattenChecklist(data);
+        const catIds = {};
+        nodes.forEach((n) => (catIds[n.cat] = catIds[n.cat] || new Set()).add(n.id));
+
+        const unique = new Map();
+        const rules = [];
+        nodes.forEach((n) => {
+          const raw = n.node.Regel;
+          if (raw == null || raw === "") return;
+          const s = String(raw);
+          if (!unique.has(s)) unique.set(s, analyseRule(s));
+          rules.push({ ...n, key: nodeKey(n), a: unique.get(s), cross: [] });
+        });
+
+        rules.forEach((r) => {
+          const a = r.a;
+          const missing = [...new Set(a.ids)].filter((id) => !catIds[r.cat].has(id));
+          if (missing.length)
+            r.cross.push({ code: "DANGLING_REF", detail: missing.join(", ") });
+          if (a.target && a.target !== r.id)
+            r.cross.push({ code: "TARGET_NOT_SELF", detail: `utfall ${a.target}, sjekkpunkt ${r.id}` });
+          const type = String(r.node.Sjekkpunkttype || "").trim();
+          if (a.kind === "preutfylling" && type && type.toLowerCase() !== "auto")
+            r.cross.push({ code: "TYPE_MISMATCH", detail: `preutfylling på «${type}»` });
+          if (a.kind === "vurdering" && type.toLowerCase() === "auto")
+            r.cross.push({ code: "TYPE_MISMATCH", detail: `vurdering på «${type}»` });
+          if (a.target && a.condIds.includes(a.target))
+            r.cross.push({ code: "SELF_CONDITION", detail: a.target });
+          if (r.node.HarMaskinlesbarRegel === true && a.status === "manual")
+            r.cross.push({ code: "FLAG_MISMATCH", detail: "" });
+        });
+
+        // Ringer: betingelse → utfall, per prosesskategori.
+        const byCat = {};
+        rules.forEach((r) => (byCat[r.cat] = byCat[r.cat] || []).push(r));
+        Object.values(byCat).forEach((list) => {
+          const g = new Map();
+          list.forEach((r) => {
+            if (!r.a.target) return;
+            r.a.condIds.forEach((c) => {
+              if (c === r.a.target) return;
+              if (!g.has(c)) g.set(c, new Set());
+              g.get(c).add(r.a.target);
+              if (!g.has(r.a.target)) g.set(r.a.target, new Set());
+            });
+          });
+          stronglyConnected(g)
+            .filter((c) => c.length > 1)
+            .forEach((comp) => {
+              const set = new Set(comp);
+              const detail = [...comp].sort().join(" → ");
+              list.forEach((r) => {
+                if (
+                  r.a.target &&
+                  set.has(r.a.target) &&
+                  r.a.condIds.some((c) => set.has(c)) &&
+                  !r.cross.some((x) => x.code === "CYCLE")
+                )
+                  r.cross.push({ code: "CYCLE", detail });
+              });
+            });
+        });
+
+        return { nodes, rules, unique };
+      }
+
+      // ---- Innholdskvalitet ------------------------------------------------
+      const CONTENT_CHECKS = {
+        DUP_ID: {
+          sev: "error",
+          label: "Samme Id med ulikt innhold",
+          help: "Samme Id brukes flere steder i samme prosesskategori, men med ulikt navn.",
+        },
+        FLAG_NO_RULE: {
+          sev: "warn",
+          label: "HarMaskinlesbarRegel uten regel",
+          help: "Flagget er true, men Regel er tomt.",
+        },
+        LOV_URL: {
+          sev: "warn",
+          label: "Lovhjemmel uten gyldig lenke",
+          help: "LovhjemmelUrl mangler, eller inneholder noe annet enn én URL.",
+        },
+        MISSING_VALUE: {
+          sev: "warn",
+          label: "Mangler verdi",
+          help: "Sjekkpunkttype, Milepel eller Tema er tomt.",
+        },
+        NN_MISSING: {
+          sev: "warn",
+          label: "Mangler nynorsk navn",
+          help: "NavnNynorsk er tomt.",
+        },
+        ORDER_DUP: {
+          sev: "warn",
+          label: "Lik Rekkefolge blant søsken",
+          help: "To eller flere sjekkpunkter på samme nivå har samme Rekkefolge.",
+        },
+        ID_FORMAT: {
+          sev: "warn",
+          label: "Id følger ikke mønsteret tall.tall",
+          help: "Fasit for Id er tall adskilt med punktum, f.eks. 1.28.",
+        },
+        TEXT_WS: {
+          sev: "fix",
+          label: "Mellomrom/linjeskift i tekst",
+          help: "Mellomrom eller linjeskift i start/slutt, eller doble mellomrom, i Navn, NavnNynorsk, Tema, Lovhjemmel eller Utfalltype. Beskrivelse sjekkes bare i start/slutt.",
+        },
+        VALUE_VARIANT: {
+          sev: "fix",
+          label: "Samme verdi skrevet ulikt",
+          help: "Verdier som bare skiller seg på store/små bokstaver eller mellomrom (f.eks. «auto»/«Auto»). Fasit er den vanligste skrivemåten.",
+        },
+        LOV_NOTATION: {
+          sev: "fix",
+          label: "Lovhenvisning skrevet ulikt",
+          help: "Samme lov/forskrift skrives på flere måter (pbl/pbl./Pbl, SAK/SAK10, «§» uten mellomrom). Fasit er den vanligste skrivemåten, med «§ » foran paragrafen.",
+        },
+        UTFALL_TEXT: {
+          sev: "warn",
+          label: "Utfalltype ulik for samme kode",
+          help: "Samme Utfalltypekode har ulik tekst i Utfalltype. Fasit er den vanligste teksten.",
+        },
+        NN_SAME: {
+          sev: "info",
+          label: "Nynorsk lik bokmål",
+          help: "Kan være riktig, men er ofte tegn på at teksten ikke er oversatt.",
+        },
+        NO_TILTAK: {
+          sev: "info",
+          label: "Ingen tiltakstyper",
+          help: "Tiltakstyper er tom.",
+        },
+        NO_UTFALL: {
+          sev: "info",
+          label: "Ingen utfall",
+          help: "Utfall er tom.",
+        },
+      };
+
+      const CONTENT_SEV_ORDER = ["error", "warn", "fix", "info"];
+
+      const collapseWs = (s) => String(s).replace(/\s+/g, " ").trim();
+
+      // Vanligste verdi i en telling (Map verdi → antall). Ved likt antall
+      // vinner den som ble sett først.
+      function mostCommon(counter) {
+        let best = null,
+          n = -1;
+        counter.forEach((c, v) => {
+          if (c > n) {
+            best = v;
+            n = c;
+          }
+        });
+        return best;
+      }
+
+      // pbl/pbl./Pbl/Plan- og bygningsloven → samme nøkkel.
+      const LAW_ALIASES = {
+        "plan-ogbygningsloven": "pbl",
+        "plan-ogbygningslova": "pbl",
+        sak: "sak10",
+        byggesaksforskriften: "sak10",
+      };
+
+      function parseLaw(text) {
+        const s = collapseWs(text);
+        // En lenke i tekstfeltet er ikke en lovhenvisning å normalisere.
+        if (/:\/\//.test(s)) return null;
+        const m = s.match(/^((?:(?:jfr?\.|jfr?(?=\s)|(?:og|se)(?=\s))\s*)*)([^§]*?)\s*(§(?:\s*§)*)\s*(.*)$/i);
+        if (!m) return null;
+        const prefix = m[2].trim();
+        if (!prefix) return null;
+        const raw = prefix.toLowerCase().replace(/[.\s]/g, "");
+        // «jf»/«Jfr.» skrives «jf.»; andre småord («og», «se») beholdes.
+        const lead = m[1]
+          ? collapseWs(m[1].replace(/\bjfr?\.?(\s*|$)/gi, "jf. ")) + " "
+          : "";
+        return {
+          jf: lead,
+          prefix,
+          key: LAW_ALIASES[raw] || raw,
+          para: m[3].replace(/\s+/g, ""),
+          rest: m[4],
+        };
+      }
+
+      function analyseContent(nodes) {
+        const out = [];
+        const push = (n, check, field, value, suggestion, detail) =>
+          out.push({
+            check,
+            sev: CONTENT_CHECKS[check].sev,
+            cat: n.cat,
+            id: n.id,
+            parentId: n.parentId,
+            navn: n.node.Navn || "",
+            field,
+            value: value == null ? "" : String(value),
+            suggestion: suggestion == null ? null : String(suggestion),
+            detail: detail || "",
+          });
+        const hasWsIssue = (s, multiline) =>
+          multiline ? s !== s.trim() : s !== collapseWs(s);
+
+        // Tellinger for «vanligste skrivemåte».
+        const variantFields = ["Sjekkpunkttype", "Milepel", "Tema", "Eier"];
+        const variants = {};
+        variantFields.forEach((f) => (variants[f] = new Map()));
+        const lawSurface = new Map();
+        const utfallText = new Map();
+        nodes.forEach(({ node }) => {
+          variantFields.forEach((f) => {
+            const v = node[f];
+            if (v == null || !String(v).trim()) return;
+            const k = collapseWs(v).toLowerCase();
+            if (!variants[f].has(k)) variants[f].set(k, new Map());
+            const m = variants[f].get(k);
+            m.set(v, (m.get(v) || 0) + 1);
+          });
+          (node.Lovhjemmel || []).forEach((l) => {
+            const p = l && l.Lovhjemmel ? parseLaw(l.Lovhjemmel) : null;
+            if (!p) return;
+            if (!lawSurface.has(p.key)) lawSurface.set(p.key, new Map());
+            const m = lawSurface.get(p.key);
+            m.set(p.prefix, (m.get(p.prefix) || 0) + 1);
+          });
+          (node.Utfall || []).forEach((u) => {
+            if (!u || !u.Utfalltypekode || u.Utfalltype == null) return;
+            if (!utfallText.has(u.Utfalltypekode)) utfallText.set(u.Utfalltypekode, new Map());
+            const m = utfallText.get(u.Utfalltypekode);
+            const t = collapseWs(u.Utfalltype);
+            m.set(t, (m.get(t) || 0) + 1);
+          });
+        });
+
+        // Fasit valgt fra dataene der det finnes flere skrivemåter, slik at
+        // visningen kan vise hva som er lagt til grunn.
+        const fasit = [];
+        const addFasit = (area, m) => {
+          if (!m || m.size < 2) return;
+          const best = mostCommon(m);
+          fasit.push({
+            area,
+            fasit: best,
+            n: m.get(best),
+            others: [...m].filter(([v]) => v !== best).sort((a, b) => b[1] - a[1]),
+          });
+        };
+        variantFields.forEach((f) => variants[f].forEach((m) => addFasit(f, m)));
+        lawSurface.forEach((m) => addFasit("Lovhenvisning", m));
+        utfallText.forEach((m, code) => addFasit(`Utfalltype (${code})`, m));
+        out.fasit = fasit;
+
+        // Samme Id i samme kategori: gjenbruk er greit, ulikt navn er det ikke.
+        const byCatId = new Map();
+        nodes.forEach((n) => {
+          const k = `${n.cat}|${n.id}`;
+          if (!byCatId.has(k)) byCatId.set(k, []);
+          byCatId.get(k).push(n);
+        });
+        byCatId.forEach((list) => {
+          const names = new Set(list.map((n) => collapseWs(n.node.Navn || "")));
+          if (list.length > 1 && names.size > 1)
+            list.forEach((n) =>
+              push(n, "DUP_ID", "Navn", n.node.Navn, null, `${list.length} forekomster, ${names.size} ulike navn`),
+            );
+        });
+
+        // Lik Rekkefolge blant søsken.
+        const siblings = new Map();
+        nodes.forEach((n) => {
+          const r = n.node.Rekkefolge;
+          if (r == null || r === "") return;
+          const k = n.parent ? `p|${nodeKey(n.parent)}` : `c|${n.cat}`;
+          if (!siblings.has(k)) siblings.set(k, new Map());
+          const m = siblings.get(k);
+          if (!m.has(String(r))) m.set(String(r), []);
+          m.get(String(r)).push(n);
+        });
+        siblings.forEach((m) =>
+          m.forEach((list, r) => {
+            const ids = new Set(list.map((n) => n.id));
+            if (ids.size > 1)
+              list.forEach((n) =>
+                push(n, "ORDER_DUP", "Rekkefolge", r, null, `deles med ${[...ids].filter((i) => i !== n.id).join(", ")}`),
+              );
+          }),
+        );
+
+        nodes.forEach((n) => {
+          const node = n.node;
+
+          if (!/^\d+(\.\d+)+$/.test(n.id)) push(n, "ID_FORMAT", "Id", n.id);
+
+          // Tema sjekkes sammen med de andre kodeverdiene under.
+          ["Navn", "NavnNynorsk", "Beskrivelse"].forEach((f) => {
+            const v = node[f];
+            if (typeof v !== "string" || !v) return;
+            const multiline = f === "Beskrivelse";
+            if (hasWsIssue(v, multiline))
+              push(n, "TEXT_WS", f, v, multiline ? v.trim() : collapseWs(v));
+          });
+
+          if (!node.NavnNynorsk || !String(node.NavnNynorsk).trim())
+            push(n, "NN_MISSING", "NavnNynorsk", node.NavnNynorsk || "");
+          else if (node.Navn && collapseWs(node.NavnNynorsk) === collapseWs(node.Navn))
+            push(n, "NN_SAME", "NavnNynorsk", node.NavnNynorsk);
+
+          ["Sjekkpunkttype", "Milepel", "Tema"].forEach((f) => {
+            const v = node[f];
+            if (v == null || !String(v).trim()) push(n, "MISSING_VALUE", f, v == null ? "(null)" : v);
+          });
+
+          variantFields.forEach((f) => {
+            const v = node[f];
+            if (v == null || !String(v).trim()) return;
+            const m = variants[f].get(collapseWs(v).toLowerCase());
+            const fasit = mostCommon(m);
+            if (v !== fasit)
+              push(n, "VALUE_VARIANT", f, v, fasit, `${m.get(fasit)} bruker «${fasit}»`);
+            else if (hasWsIssue(v, false)) push(n, "TEXT_WS", f, v, collapseWs(v));
+          });
+
+          (node.Lovhjemmel || []).forEach((l, i) => {
+            if (!l) return;
+            const text = l.Lovhjemmel == null ? "" : String(l.Lovhjemmel);
+            const field = `Lovhjemmel[${i + 1}]`;
+            // Forslaget for notasjon rydder også mellomrom, så samme verdi
+            // meldes ikke i tillegg som mellomromsfunn.
+            let notation = false;
+            const p = text ? parseLaw(text) : null;
+            if (p) {
+              const fasitPrefix = mostCommon(lawSurface.get(p.key));
+              const suggestion = `${p.jf}${fasitPrefix} ${p.para} ${p.rest}`.trim();
+              if (suggestion !== collapseWs(text)) {
+                notation = true;
+                push(n, "LOV_NOTATION", field, text, suggestion,
+                  fasitPrefix !== p.prefix ? `${lawSurface.get(p.key).get(fasitPrefix)} bruker «${fasitPrefix}»` : "skrivemåte rundt §/jf.");
+              }
+            }
+            if (!notation && text && hasWsIssue(text, false))
+              push(n, "TEXT_WS", field, text, collapseWs(text));
+            const url = l.LovhjemmelUrl == null ? "" : String(l.LovhjemmelUrl).trim();
+            if (!url) push(n, "LOV_URL", `${field}.LovhjemmelUrl`, "(mangler)", null, text);
+            else if (!/^https?:\/\/\S+$/.test(url))
+              push(n, "LOV_URL", `${field}.LovhjemmelUrl`, l.LovhjemmelUrl, null, "ikke én gyldig URL");
+          });
+
+          (node.Utfall || []).forEach((u) => {
+            if (!u || u.Utfalltype == null) return;
+            const field = `Utfall[${u.Utfalltypekode || "?"}].Utfalltype`;
+            const v = String(u.Utfalltype);
+            const fasit = u.Utfalltypekode ? mostCommon(utfallText.get(u.Utfalltypekode)) : null;
+            if (fasit && collapseWs(v) !== fasit)
+              push(n, "UTFALL_TEXT", field, v, fasit, `${utfallText.get(u.Utfalltypekode).get(fasit)} bruker fasit`);
+            else if (hasWsIssue(v, false)) push(n, "TEXT_WS", field, v, collapseWs(v));
+          });
+
+          if (!Array.isArray(node.Tiltakstyper) || !node.Tiltakstyper.length)
+            push(n, "NO_TILTAK", "Tiltakstyper", "(tom)");
+          if (!Array.isArray(node.Utfall) || !node.Utfall.length)
+            push(n, "NO_UTFALL", "Utfall", "(tom)");
+          if (node.HarMaskinlesbarRegel === true && !(node.Regel && String(node.Regel).trim()))
+            push(n, "FLAG_NO_RULE", "HarMaskinlesbarRegel", "true");
+        });
+        return out;
+      }
+
+      // @@engine-end
+
+      // ---- Visning ---------------------------------------------------------
+      const A = {
+        view: "compare",
+        tab: "rules",
+        model: null,
+        content: null,
+        meta: null,
+      };
+      const A_STORAGE_KEY = "sjekklisteAnalyseState";
+      const byId = (id) => document.getElementById(id);
+      const envName = (e) => (ENVIRONMENTS[e] ? ENVIRONMENTS[e].label : e);
+      const pct = (n, d) => (d ? `${Math.round((n / d) * 100)} %` : "–");
+
+      // Synlige mellomrom: linjeskift, tabulator og mellomrom som ikke er ett
+      // enkelt mellomrom mellom to tegn.
+      function showWs(s, all) {
+        const str = String(s);
+        const lead = str.length - str.trimStart().length;
+        const trail = str.length - str.trimEnd().length;
+        let out = "";
+        for (let i = 0; i < str.length; i++) {
+          const c = str[i];
+          if (c === "\n") out += '<span class="ws-mark" title="Linjeskift">↵</span>\n';
+          else if (c === "\r") out += '<span class="ws-mark" title="Linjeskift (CR)">␍</span>';
+          else if (c === "\t") out += '<span class="ws-mark" title="Tabulator">→</span>';
+          else if (c === " ") out += '<span class="ws-mark" title="Hardt mellomrom">⍽</span>';
+          else if (
+            c === " " &&
+            (all || i < lead || i >= str.length - trail || str[i - 1] === " " || str[i + 1] === " ")
+          )
+            out += '<span class="ws-mark" title="Mellomrom">·</span>';
+          else out += escapeHtml(c);
+        }
+        return out;
+      }
+
+      const diffTokens = (s) => String(s).match(/\s|[\wÆØÅæøå]+|[^\s\wÆØÅæøå]/g) || [];
+
+      function exactDiff(a, b) {
+        const m = a.length,
+          n = b.length;
+        const dp = Array.from({ length: m + 1 }, () => new Uint32Array(n + 1));
+        for (let i = m - 1; i >= 0; i--)
+          for (let j = n - 1; j >= 0; j--)
+            dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+        const ops = [];
+        let i = 0,
+          j = 0;
+        while (i < m && j < n) {
+          if (a[i] === b[j]) {
+            ops.push(["eq", a[i]]);
+            i++;
+            j++;
+          } else if (dp[i + 1][j] >= dp[i][j + 1]) ops.push(["del", a[i++]]);
+          else ops.push(["ins", b[j++]]);
+        }
+        while (i < m) ops.push(["del", a[i++]]);
+        while (j < n) ops.push(["ins", b[j++]]);
+        return ops;
+      }
+
+      // Én linje: fjernet tekst gjennomstreket, ny tekst uthevet.
+      function suggestionDiffHtml(from, to) {
+        if (to === "") return '<span class="rd-del">' + showWs(from, true) + "</span> <em class=\"a-muted\">(tøm feltet)</em>";
+        return exactDiff(diffTokens(from), diffTokens(to))
+          .map(([t, s]) =>
+            t === "eq"
+              ? escapeHtml(s)
+              : `<span class="${t === "del" ? "rd-del" : "rd-ins"}">${showWs(s, true)}</span>`,
+          )
+          .join("");
+      }
+
+      function chip(sev, label, help, detail) {
+        const title = [help, detail].filter(Boolean).join(" – ");
+        return `<span class="a-chip sev-${sev}" title="${escapeHtml(title)}">${escapeHtml(label)}${
+          detail ? `: <span class="a-muted">${escapeHtml(detail)}</span>` : ""
+        }</span>`;
+      }
+
+      const ruleChip = (i) => chip(RULE_ISSUES[i.code].sev, RULE_ISSUES[i.code].label, RULE_ISSUES[i.code].help, i.detail);
+      const statusBadge = (st) => `<span class="a-status rs-${st}">${RULE_STATUS[st].label}</span>`;
+      // Regeltype ved siden av vurderingen; manuelle regler uten tolkbart utfall får ingen.
+      const kindBadge = (k) =>
+        k ? ` <span class="a-kind-badge kind-${k}" title="${escapeHtml(RULE_KIND[k].help)}">${escapeHtml(RULE_KIND[k].label)}</span>` : "";
+
+      function loc(r) {
+        return `<div class="a-loc">${escapeHtml(r.cat)} · ${escapeHtml(r.id)}${
+          r.parentId ? ` <span class="a-muted">under ${escapeHtml(r.parentId)}</span>` : ""
+        }</div><div class="a-name">${escapeHtml(r.node ? r.node.Navn || "" : r.navn || "")}</div>`;
+      }
+
+      function fillSelect(el, options, keep) {
+        const prev = keep != null ? keep : el.value;
+        const first = el.options[0].outerHTML;
+        el.innerHTML =
+          first +
+          options
+            .map(([v, l]) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`)
+            .join("");
+        if ([...el.options].some((o) => o.value === prev)) el.value = prev;
+      }
+
+      function stackHtml(parts, total) {
+        return parts
+          .filter((p) => p.n > 0)
+          .map(
+            (p) =>
+              `<div style="flex:${p.n};background:${p.color}" title="${escapeHtml(p.label)}: ${p.n} (${pct(p.n, total)})"${
+                p.attrs || ""
+              }></div>`,
+          )
+          .join("");
+      }
+
+      // ---- Tilstand (URL + localStorage) ----------------------------------
+      const A_FIELDS = {
+        ads: "aDs",
+        aenv: "aEnv",
+        aq: "aRuleQ",
+        ast: "aRuleStatus",
+        acode: "aRuleCode",
+        acat: "aRuleCat",
+        apat: "aRulePattern",
+        akind: "aRuleKind",
+        cq: "aContentQ",
+        cchk: "aContentCheck",
+        csev: "aContentSev",
+        ccat: "aContentCat",
+      };
+
+      function analysisState() {
+        const s = { view: A.view, atab: A.tab, auniq: byId("aRuleUnique").checked ? "1" : "" };
+        Object.entries(A_FIELDS).forEach(([k, id]) => (s[k] = byId(id).value));
+        return s;
+      }
+
+      // Kalles av syncState() i sammenligningsskriptet.
+      function analysisUrlParams(params) {
+        const s = analysisState();
+        if (s.view !== "analyse") return;
+        params.set("view", "analyse");
+        if (s.atab !== "rules") params.set("atab", s.atab);
+        if (s.auniq) params.set("auniq", "1");
+        Object.keys(A_FIELDS).forEach((k) => {
+          if (s[k]) params.set(k, s[k]);
+        });
+        try {
+          localStorage.setItem(A_STORAGE_KEY, JSON.stringify(s));
+        } catch (e) {
+          /* ikke tilgjengelig (privat modus) */
+        }
+      }
+
+      function analysisSync() {
+        if (typeof syncState === "function") syncState();
+        if (A.view !== "analyse") {
+          try {
+            localStorage.setItem(A_STORAGE_KEY, JSON.stringify(analysisState()));
+          } catch (e) {
+            /* ikke tilgjengelig */
+          }
+        }
+      }
+
+      // Filterverdier som først kan settes når listene er fylt fra data.
+      let aPending = {};
+
+      function analysisRestore() {
+        const params = new URLSearchParams(location.search);
+        let s = {};
+        if (params.get("view") === "analyse") {
+          s = { view: "analyse", atab: params.get("atab"), auniq: params.get("auniq") };
+          Object.keys(A_FIELDS).forEach((k) => (s[k] = params.get(k)));
+        } else {
+          // En lenke til sammenligningen sier ingenting om analysen; bruk da
+          // det som sist ble valgt der, men vis sammenligningen.
+          try {
+            s = JSON.parse(localStorage.getItem(A_STORAGE_KEY) || "{}");
+          } catch (e) {
+            s = {};
+          }
+          if ([...params.keys()].length) s.view = "compare";
+        }
+        if (!s.ads) s.ads = byId("sjekklisteSelect").value;
+        Object.entries(A_FIELDS).forEach(([k, id]) => {
+          const v = s[k];
+          if (v == null) return;
+          const el = byId(id);
+          if (el.tagName === "INPUT") el.value = v;
+          else if ([...el.options].some((o) => o.value === v)) el.value = v;
+          else aPending[id] = v;
+        });
+        byId("aRuleUnique").checked = s.auniq === "1";
+        A.tab = s.atab === "content" ? "content" : "rules";
+        showSubTab(A.tab, true);
+        showView(s.view === "analyse" ? "analyse" : "compare", true);
+      }
+
+      function showView(view, silent) {
+        A.view = view;
+        byId("compareView").hidden = view !== "compare";
+        byId("analysisView").hidden = view !== "analyse";
+        byId("modeCompare").setAttribute("aria-selected", String(view === "compare"));
+        byId("modeAnalyse").setAttribute("aria-selected", String(view === "analyse"));
+        if (!silent) analysisSync();
+      }
+
+      function showSubTab(tab, silent) {
+        A.tab = tab;
+        byId("aRulesPanel").hidden = tab !== "rules";
+        byId("aContentPanel").hidden = tab !== "content";
+        byId("aTabRules").setAttribute("aria-selected", String(tab === "rules"));
+        byId("aTabContent").setAttribute("aria-selected", String(tab === "content"));
+        if (!silent) analysisSync();
+      }
+
+      // ---- Lasting ---------------------------------------------------------
+      async function fetchChecklist(ds, env) {
+        const res = await fetch(SJEKKLISTER[ds].urls[env], {
+          method: "GET",
+          mode: "cors",
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error(`${envName(env)} API feil: ${res.status} ${res.statusText}`);
+        return res.json();
+      }
+
+      async function runAnalysis() {
+        const ds = byId("aDs").value;
+        const env = byId("aEnv").value;
+        const loading = byId("aLoading");
+        const error = byId("aError");
+        loading.textContent = `Henter ${SJEKKLISTER[ds].label} fra ${envName(env)}...`;
+        loading.style.display = "block";
+        error.style.display = "none";
+        byId("aLoad").disabled = true;
+        try {
+          const data = await fetchChecklist(ds, env);
+          A.model = analyseRules(data);
+          A.content = analyseContent(A.model.nodes);
+          A.meta = { ds, env, loadedAt: new Date() };
+          renderAnalysis();
+        } catch (err) {
+          console.error("Feil ved analyse:", err);
+          error.textContent =
+            err instanceof TypeError
+              ? `Klarte ikke å hente ${SJEKKLISTER[ds].label} fra ${envName(env)}${cmp ? `/${envName(cmp)}` : ""}. ` +
+                `Trolig CORS eller nettverk: sjekk at API-et tillater origin ${location.origin}, og at du har tilgang til miljøet. ` +
+                `(Teknisk: ${err.message || "Failed to fetch"})`
+              : `Feil ved analyse: ${err.message}`;
+          error.style.display = "block";
+        } finally {
+          loading.style.display = "none";
+          byId("aLoad").disabled = false;
+        }
+      }
+
+      // Nytt valg av sjekkliste/miljø gjør et vist resultat ugyldig.
+      function resetAnalysis() {
+        A.model = A.content = A.meta = null;
+        ["aRuleSummary", "aRuleFilters", "aContentSummary", "aContentFilters"].forEach(
+          (id) => (byId(id).style.display = "none"),
+        );
+        byId("aRuleList").innerHTML = "";
+        byId("aContentList").innerHTML = "";
+        byId("aEmpty").style.display = "block";
+        byId("aExportCsv").disabled = true;
+        byId("aExportJson").disabled = true;
+      }
+
+      function renderAnalysis() {
+        const m = A.model;
+        byId("aEmpty").style.display = "none";
+        byId("aExportCsv").disabled = false;
+        byId("aExportJson").disabled = false;
+
+        const cats = [...new Set(m.nodes.map((n) => n.cat))].sort().map((c) => [c, c]);
+        const codes = Object.keys(RULE_ISSUES)
+          .filter((c) => m.rules.some((r) => r.a.issues.some((i) => i.code === c) || r.cross.some((i) => i.code === c)))
+          .map((c) => [c, `${SEV_LABEL[RULE_ISSUES[c].sev]}: ${RULE_ISSUES[c].label}`]);
+        const patterns = patternCounts().map((p) => [p.pattern, `${p.pattern} (${p.n})`]);
+        const take = (id) => {
+          const v = aPending[id];
+          delete aPending[id];
+          return v;
+        };
+        fillSelect(byId("aRuleCat"), cats, take("aRuleCat"));
+        fillSelect(byId("aRuleCode"), codes, take("aRuleCode"));
+        fillSelect(byId("aRulePattern"), patterns, take("aRulePattern"));
+        fillSelect(byId("aContentCat"), cats, take("aContentCat"));
+        fillSelect(
+          byId("aContentCheck"),
+          Object.keys(CONTENT_CHECKS)
+            .filter((c) => A.content.some((f) => f.check === c))
+            .map((c) => [c, CONTENT_CHECKS[c].label]),
+          take("aContentCheck"),
+        );
+
+        renderRuleSummary();
+        byId("aRuleFilters").style.display = "flex";
+        renderRuleList();
+        renderContentSummary();
+        byId("aContentFilters").style.display = "flex";
+        renderContentList();
+        analysisSync();
+      }
+
+      function patternCounts() {
+        const map = new Map();
+        A.model.rules.forEach((r) => {
+          const p = r.a.pattern;
+          if (!map.has(p)) map.set(p, { pattern: p, n: 0, texts: new Set(), st: { ok: 0, fixable: 0, manual: 0 } });
+          const e = map.get(p);
+          e.n++;
+          e.texts.add(r.a.raw);
+          e.st[r.a.status]++;
+        });
+        return [...map.values()].sort((a, b) => b.n - a.n || a.pattern.localeCompare(b.pattern));
+      }
+
+      function renderCodeTable() {
+        byId("aCodeTable").innerHTML =
+          `<thead><tr><th>Type</th><th>Avvik</th><th>Forklaring</th></tr></thead><tbody>` +
+          Object.entries(RULE_ISSUES)
+            .map(
+              ([, d]) =>
+                `<tr><td>${chip(d.sev, SEV_LABEL[d.sev])}</td><td class="field">${escapeHtml(d.label)}</td><td>${escapeHtml(d.help)}</td></tr>`,
+            )
+            .join("") +
+          `</tbody>`;
+      }
+
+      // Klikkbart element i sammendraget: setter et filter og går til listen.
+      const drillAttrs = (filters) =>
+        ` class="stats-clickable" data-drill='${escapeHtml(JSON.stringify(filters))}'`;
+
+      function renderRuleSummary() {
+        const m = A.model;
+        const rules = m.rules;
+        const total = rules.length;
+        const cnt = { ok: 0, fixable: 0, manual: 0 };
+        rules.forEach((r) => cnt[r.a.status]++);
+        const crossRules = rules.filter((r) => r.cross.length).length;
+        const flagTrue = m.nodes.filter((n) => n.node.HarMaskinlesbarRegel === true).length;
+        const flagTrueWithRule = rules.filter((r) => r.node.HarMaskinlesbarRegel === true).length;
+        const meta = A.meta;
+        const el = byId("aRuleSummary");
+        el.style.display = "block";
+
+        const parts = Object.keys(RULE_STATUS).map((k) => ({
+          n: cnt[k],
+          color: RULE_STATUS[k].color,
+          label: RULE_STATUS[k].label,
+          attrs: drillAttrs({ aRuleStatus: k }),
+        }));
+
+        // Avvik
+        const codeRows = Object.keys(RULE_ISSUES)
+          .map((code) => {
+            const hits = rules.filter(
+              (r) => r.a.issues.some((i) => i.code === code) || r.cross.some((i) => i.code === code),
+            );
+            return { code, n: hits.length, texts: new Set(hits.map((r) => r.a.raw)).size };
+          })
+          .filter((x) => x.n > 0)
+          .sort((a, b) => {
+            const o = ["manual", "cross", "fix"];
+            return o.indexOf(RULE_ISSUES[a.code].sev) - o.indexOf(RULE_ISSUES[b.code].sev) || b.n - a.n;
+          });
+
+        // Per kategori
+        const cats = {};
+        rules.forEach((r) => {
+          const c = (cats[r.cat] = cats[r.cat] || { ok: 0, fixable: 0, manual: 0, cross: 0, n: 0 });
+          c.n++;
+          c[r.a.status]++;
+          if (r.cross.length) c.cross++;
+        });
+        const nodesPerCat = {};
+        m.nodes.forEach((n) => (nodesPerCat[n.cat] = (nodesPerCat[n.cat] || 0) + 1));
+
+        const pats = patternCounts();
+        const patRow = (p) => `<tr${drillAttrs({ aRulePattern: p.pattern })}>
+            <td class="field"><span class="a-code">${escapeHtml(p.pattern)}</span>${
+              // Mønsteret har minst én regel som følger fasit, altså er selve
+              // strukturen riktig. Avvikene er da bare skrivemåte (mellomrom o.l.).
+              p.st.ok ? ' <span class="a-fasit-tag a-fasit-tag-sm" title="Strukturen følger fasit">FASIT</span>' : ""
+            }</td>
+            <td class="num">${p.n}</td><td class="num">${p.texts.size}</td>
+            <td><div class="a-mini-stack">${stackHtml(
+              Object.keys(RULE_STATUS).map((k) => ({ n: p.st[k], color: RULE_STATUS[k].color, label: RULE_STATUS[k].label })),
+              p.n,
+            )}</div></td></tr>`;
+
+
+        el.innerHTML = `
+          <h2>Maskinlesbare regler</h2>
+          <p class="stats-sub">${escapeHtml(SJEKKLISTER[meta.ds].label)} · ${escapeHtml(envName(meta.env))} ·
+            ${m.nodes.length} sjekkpunkter, ${total} med tekst i Regel (${m.unique.size} ulike tekster) ·
+            hentet ${meta.loadedAt.toLocaleTimeString("no-NO", { hour: "2-digit", minute: "2-digit" })}</p>
+          ${
+            total
+              ? `<div class="stats-top">
+            <div>
+              <div class="stats-hero-value">${pct(cnt.ok, total)}</div>
+              <div class="stats-hero-label">av reglene følger fasit (${cnt.ok} av ${total})</div>
+              <div class="stats-meter"><span style="width:${total ? (cnt.ok / total) * 100 : 0}%"></span></div>
+              <div class="stats-hero-note">${cnt.fixable} kan rettes automatisk · ${cnt.manual} må vurderes manuelt ·
+                ${crossRules} har kryssjekk-funn</div>
+            </div>
+            <div>
+              <div class="stats-stack">${stackHtml(parts, total)}</div>
+              <div class="stats-legend">${Object.keys(RULE_STATUS)
+                .map(
+                  (k) => `<div class="stats-legend-item"${drillAttrs({ aRuleStatus: k })}>
+                  <span class="stats-swatch" style="background:${RULE_STATUS[k].color}"></span>
+                  <span class="stats-legend-count">${cnt[k]}</span>
+                  <span class="stats-legend-label">${RULE_STATUS[k].label}</span>
+                  <span class="stats-legend-pct">${pct(cnt[k], total)}</span></div>`,
+                )
+                .join("")}</div>
+              <p class="a-flag-note"><strong>HarMaskinlesbarRegel</strong> er <code>true</code> på ${flagTrue} av
+                ${m.nodes.length} sjekkpunkter${flagTrueWithRule !== total ? `, men ${total - flagTrueWithRule} sjekkpunkter har tekst i Regel uten at flagget er satt` : ""}.
+                Flagget kan ikke brukes til å skille maskinlesbare regler fra andre i dag.</p>
+            </div>
+          </div>
+
+          <div class="stats-section"><h3>Hva avviker fra fasit?</h3>
+            <p class="stats-section-note">Én regel kan ha flere avvik. «Ulike tekster» teller hver regeltekst én gang, selv om den brukes på flere sjekkpunkter.</p>
+            <table class="stats-table"><thead><tr><th>Avvik</th><th>Type</th><th class="num">Sjekkpunkter</th><th class="num">Ulike tekster</th></tr></thead><tbody>
+            ${codeRows
+              .map(
+                (x) => `<tr${drillAttrs({ aRuleCode: x.code })}><td class="field" title="${escapeHtml(RULE_ISSUES[x.code].help)}">${escapeHtml(
+                  RULE_ISSUES[x.code].label,
+                )}</td><td>${chip(RULE_ISSUES[x.code].sev, SEV_LABEL[RULE_ISSUES[x.code].sev])}</td><td class="num">${x.n}</td><td class="num">${x.texts}</td></tr>`,
+              )
+              .join("")}
+            </tbody></table></div>
+
+          <div class="stats-section"><h3>Regeltyper</h3>
+            <p class="stats-section-note">Utfallet avgjør typen: <code>then (1.28)</code> peker på et sjekkpunkt som skal vurderes,
+              <code>then (1.1 = true)</code> preutfyller svaret. Regler som ikke kan tolkes, har ukjent type.</p>
+            <table class="stats-table"><thead><tr><th>Regeltype</th><th class="num">Sjekkpunkter</th><th class="num">Følger fasit</th>
+              <th class="num">Kan rettes</th><th class="num">Manuell</th></tr></thead><tbody>
+            ${["vurdering", "preutfylling", "none"]
+              .map((k) => {
+                const list = rules.filter((r) => (r.a.kind || "none") === k);
+                if (!list.length) return "";
+                const n = (st) => list.filter((r) => r.a.status === st).length;
+                const label = k === "none" ? "Ukjent (kan ikke tolkes)" : RULE_KIND[k].label;
+                const help = k === "none" ? "Fritekst, flere regler i ett felt eller utfall som ikke er et sjekkpunkt-Id." : RULE_KIND[k].help;
+                return `<tr${drillAttrs({ aRuleKind: k })}><td class="field" title="${escapeHtml(help)}">${escapeHtml(label)}</td>
+                  <td class="num">${list.length}</td><td class="num">${n("ok")}</td><td class="num">${n("fixable")}</td><td class="num">${n("manual")}</td></tr>`;
+              })
+              .join("")}
+            </tbody></table></div>
+
+          <div class="stats-section"><h3>Per prosesskategori</h3>
+            <table class="stats-table"><thead><tr><th>Kategori</th><th class="num">Sjekkpunkter</th><th class="num">Med regel</th>
+              <th class="num">Følger fasit</th><th class="num">Kan rettes</th><th class="num">Manuell</th><th class="num">Kryssjekk</th><th>Fordeling</th></tr></thead><tbody>
+            ${Object.keys(cats)
+              .sort()
+              .map((c) => {
+                const x = cats[c];
+                return `<tr${drillAttrs({ aRuleCat: c })}><td class="field">${escapeHtml(c)}</td><td class="num">${nodesPerCat[c]}</td>
+                  <td class="num">${x.n}</td><td class="num">${x.ok}</td><td class="num">${x.fixable}</td><td class="num">${x.manual}</td>
+                  <td class="num">${x.cross}</td><td><div class="a-mini-stack">${stackHtml(
+                    Object.keys(RULE_STATUS).map((k) => ({ n: x[k], color: RULE_STATUS[k].color, label: RULE_STATUS[k].label })),
+                    x.n,
+                  )}</div></td></tr>`;
+              })
+              .join("")}
+            </tbody></table></div>
+
+          <div class="stats-section"><h3>Mønstre</h3>
+            <p class="stats-section-note">Reglene gruppert på struktur: Id-er er byttet ut med <code>ID</code> og datafelt med <code>felt</code>.
+              ${pats.length} ulike mønstre. Mønstre merket <span class="a-fasit-tag a-fasit-tag-sm">FASIT</span> har riktig struktur;
+              avvik innenfor dem gjelder mellomrom, linjeskift eller store/små bokstaver. Sjeldne mønstre er ofte skrivefeil.</p>
+            <table class="stats-table"><thead><tr><th>Mønster</th><th class="num">Sjekkpunkter</th><th class="num">Ulike tekster</th><th>Vurdering</th></tr></thead>
+              <tbody>${pats.slice(0, 12).map(patRow).join("")}</tbody></table>
+            ${
+              pats.length > 12
+                ? `<details><summary class="a-more">Vis alle ${pats.length} mønstre</summary>
+                <table class="stats-table"><tbody>${pats.slice(12).map(patRow).join("")}</tbody></table></details>`
+                : ""
+            }
+          </div>
+          <p class="stats-hint">Klikk på en rad eller et fargefelt for å filtrere listen under.</p>`
+              : `<p class="stats-empty">Ingen sjekkpunkter har tekst i Regel.</p>`
+          }`;
+        el.querySelectorAll("[data-drill]").forEach((d) => makeActivatable(d));
+      }
+
+      function applyDrill(filters, listId) {
+        Object.entries(filters).forEach(([id, v]) => (byId(id).value = v));
+        if (listId === "aRuleList") renderRuleList();
+        else renderContentList();
+        analysisSync();
+        byId(listId === "aRuleList" ? "aRuleFilters" : "aContentFilters").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+
+      function ruleFilterValues() {
+        return {
+          q: byId("aRuleQ").value.trim().toLowerCase(),
+          status: byId("aRuleStatus").value,
+          code: byId("aRuleCode").value,
+          cat: byId("aRuleCat").value,
+          pattern: byId("aRulePattern").value,
+          kind: byId("aRuleKind").value,
+          unique: byId("aRuleUnique").checked,
+        };
+      }
+
+      function filteredRules() {
+        const f = ruleFilterValues();
+        return A.model.rules.filter((r) => {
+          if (f.cat && r.cat !== f.cat) return false;
+          if (f.status === "problems") {
+            if (r.a.status === "ok" && !r.cross.length) return false;
+          } else if (f.status && r.a.status !== f.status) return false;
+          if (f.code && !r.a.issues.some((i) => i.code === f.code) && !r.cross.some((i) => i.code === f.code))
+            return false;
+          if (f.pattern && r.a.pattern !== f.pattern) return false;
+          if (f.kind && (r.a.kind || "none") !== f.kind) return false;
+          if (f.q) {
+            const hay = `${r.cat} ${r.id} ${r.node.Navn || ""} ${r.a.raw}`.toLowerCase();
+            if (!hay.includes(f.q)) return false;
+          }
+          return true;
+        });
+      }
+
+      // Hele regelen slik den skal stå etter fasit, med endringen under.
+      function suggestionCell(a) {
+        if (a.status === "ok") return '<span class="a-ok-text">✓ Står allerede slik fasit krever</span>';
+        if (a.status === "manual") {
+          const why = a.issues
+            .filter((i) => RULE_ISSUES[i.code].sev === "manual")
+            .map((i) => escapeHtml(RULE_ISSUES[i.code].help))
+            .join(" ");
+          return `<span class="a-manual-text"><strong>Ingen entydig fasit</strong> – regelen må skrives om for hånd. ${why}</span>`;
+        }
+        const target = a.suggestion === ""
+          ? '<em>(tomt felt)</em>'
+          : escapeHtml(a.suggestion);
+        return `<span class="a-code a-fasit-text">${target}</span>
+          <span class="a-change">Endring: <span class="a-code">${suggestionDiffHtml(a.raw, a.suggestion)}</span></span>`;
+      }
+
+      const A_LIST_LIMIT = 1000;
+
+      function renderRuleList() {
+        if (!A.model) return;
+        const f = ruleFilterValues();
+        const rows = filteredRules();
+        const total = A.model.rules.length;
+        const list = byId("aRuleList");
+        ["aRuleQ", "aRuleStatus", "aRuleCode", "aRuleCat", "aRulePattern", "aRuleKind"].forEach((id) =>
+          byId(id).closest(".filter-group").classList.toggle("active", !!byId(id).value),
+        );
+        const legend = `<span class="a-diff-legend"><span><span class="rd-del">fjernes</span> / <span class="rd-ins">legges til</span></span>
+          <span><span class="ws-mark">·</span> mellomrom <span class="ws-mark">↵</span> linjeskift</span></span>`;
+
+        if (!rows.length) {
+          list.innerHTML = `<div class="a-empty">Ingen regler passer filteret.</div>`;
+          return;
+        }
+
+        if (f.unique) {
+          const groups = new Map();
+          rows.forEach((r) => {
+            if (!groups.has(r.a.raw)) groups.set(r.a.raw, []);
+            groups.get(r.a.raw).push(r);
+          });
+          const sorted = [...groups.values()].sort((x, y) => {
+            const o = ["manual", "fixable", "ok"];
+            return o.indexOf(x[0].a.status) - o.indexOf(y[0].a.status) || y.length - x.length;
+          });
+          list.innerHTML = `<div class="a-list-head"><span>Viser ${groups.size} ulike regeltekster (${rows.length} av ${total} sjekkpunkter)</span>${legend}</div>
+            <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Brukes av</th><th>Regel</th>
+              <th>Fasit – slik regelen skal stå</th><th>Avvik</th></tr></thead><tbody>
+            ${sorted
+              .slice(0, A_LIST_LIMIT)
+              .map((g) => {
+                const a = g[0].a;
+                const cross = new Map();
+                g.forEach((r) => r.cross.forEach((c) => cross.set(c.code, (cross.get(c.code) || 0) + 1)));
+                const owners = g
+                  .slice(0, 24)
+                  .map((r) => `<span class="a-owner" title="${escapeHtml(r.node.Navn || "")}">${escapeHtml(r.cat)} ${escapeHtml(r.id)}</span>`)
+                  .join("");
+                return `<tr><td data-label="Brukes av">${statusBadge(a.status)}${kindBadge(a.kind)}
+                  <div class="a-owners">${owners}${g.length > 24 ? `<span class="a-muted">+${g.length - 24}</span>` : ""}</div></td>
+                  <td class="a-rule" data-label="Regel"><span class="a-code">${showWs(a.raw)}</span></td>
+                  <td class="a-rule" data-label="Fasit – slik regelen skal stå">${suggestionCell(a)}</td>
+                  <td data-label="Avvik"><div class="a-chips">${a.issues.map(ruleChip).join("")}${[...cross]
+                    .map(([c, n]) => chip(RULE_ISSUES[c].sev, RULE_ISSUES[c].label, RULE_ISSUES[c].help, `${n} sjekkpunkt`))
+                    .join("")}</div></td></tr>`;
+              })
+              .join("")}
+            </tbody></table></div>`;
+          return;
+        }
+
+        list.innerHTML = `<div class="a-list-head"><span>Viser ${Math.min(rows.length, A_LIST_LIMIT)} av ${rows.length} treff (${total} regler totalt)</span>${legend}</div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Sjekkpunkt</th><th>Regel i ${escapeHtml(
+            envName(A.meta.env),
+          )}</th><th>Fasit – slik regelen skal stå</th><th>Avvik</th></tr></thead><tbody>
+          ${rows
+            .slice(0, A_LIST_LIMIT)
+            .map(
+              (r) => `<tr><td data-label="Sjekkpunkt">${statusBadge(r.a.status)}${kindBadge(r.a.kind)}${loc(r)}</td>
+                <td class="a-rule" data-label="Regel i ${escapeHtml(envName(A.meta.env))}"><span class="a-code">${showWs(r.a.raw)}</span></td>
+                <td class="a-rule" data-label="Fasit – slik regelen skal stå">${suggestionCell(r.a)}</td>
+                <td data-label="Avvik"><div class="a-chips">${r.a.issues.map(ruleChip).join("")}${r.cross.map(ruleChip).join("")}</div></td></tr>`,
+            )
+            .join("")}
+          </tbody></table></div>`;
+      }
+
+      // ---- Innholdskvalitet: visning ----------------------------------------
+      function renderContentSummary() {
+        const el = byId("aContentSummary");
+        el.style.display = "block";
+        const f = A.content;
+        const bySev = {};
+        CONTENT_SEV_ORDER.forEach((s) => (bySev[s] = 0));
+        f.forEach((x) => bySev[x.sev]++);
+        const rows = Object.keys(CONTENT_CHECKS)
+          .map((c) => {
+            const hits = f.filter((x) => x.check === c);
+            return { c, n: hits.length, points: new Set(hits.map((x) => `${x.cat}|${x.parentId}|${x.id}`)).size };
+          })
+          .filter((x) => x.n);
+        const sevColor = { error: "var(--rs-manual)", warn: "#d97706", fix: "var(--rs-fix)", info: "var(--rs-info)" };
+        const affected = new Set(f.filter((x) => x.sev !== "info").map((x) => `${x.cat}|${x.parentId}|${x.id}`)).size;
+        el.innerHTML = `<h2>Innholdskvalitet</h2>
+          <p class="stats-sub">${escapeHtml(SJEKKLISTER[A.meta.ds].label)} · ${escapeHtml(envName(A.meta.env))} ·
+            ${A.model.nodes.length} sjekkpunkter · ${f.length} funn totalt</p>
+          <div class="stats-top"><div>
+            <div class="stats-hero-value">${affected}</div>
+            <div class="stats-hero-label">sjekkpunkter med funn som bør sjekkes eller rettes</div>
+            <div class="stats-hero-note">Info-funn er ikke med i tallet.</div>
+          </div><div>
+            <div class="stats-stack">${stackHtml(
+              CONTENT_SEV_ORDER.map((s) => ({ n: bySev[s], color: sevColor[s], label: SEV_LABEL[s], attrs: drillAttrs({ aContentSev: s }) })),
+              f.length,
+            )}</div>
+            <div class="stats-legend">${CONTENT_SEV_ORDER.map(
+              (s) => `<div class="stats-legend-item"${drillAttrs({ aContentSev: s })}><span class="stats-swatch" style="background:${sevColor[s]}"></span>
+                <span class="stats-legend-count">${bySev[s]}</span><span class="stats-legend-label">${SEV_LABEL[s]}</span></div>`,
+            ).join("")}</div>
+          </div></div>
+          <div class="a-fasit-card" style="margin: 28px 0 0">
+            <div class="a-fasit-head"><span class="a-fasit-tag">FASIT</span><h2>Hva innholdet sjekkes mot</h2></div>
+            <table class="a-fasit-examples"><thead><tr><th>Felt</th><th>✓ Fasit</th><th>✗ Eksempel på avvik</th></tr></thead><tbody>
+              <tr><td>Id</td><td><code>1.28</code> (tall.tall)</td><td><code>1,28</code>, <code>A1</code></td></tr>
+              <tr><td>Tekst (navn, tema, lovhjemmel, utfalltype)</td><td><code>Er søknaden komplett?</code></td>
+                <td><code><span class="ws-mark">·</span>Er søknaden<span class="ws-mark">··</span>komplett?<span class="ws-mark">↵</span></code></td></tr>
+              <tr><td>Lovhenvisning</td><td><code>pbl. § 21-2</code>, <code>jf. SAK10 § 5-4</code></td>
+                <td><code>pbl.§ 21-2</code>, <code>Jfr. SAK § 5-4</code></td></tr>
+              <tr><td>LovhjemmelUrl</td><td>Én lenke: <code>https://lovdata.no/…</code></td><td>Tom, eller lenke med tekst etter</td></tr>
+              <tr><td>NavnNynorsk</td><td>Utfylt og oversatt</td><td>Tom, eller lik bokmål</td></tr>
+              <tr><td>Rekkefolge</td><td>Unik blant søsken</td><td>To sjekkpunkter på samme nivå med samme tall</td></tr>
+            </tbody></table>
+            ${
+              (f.fasit || []).length
+                ? `<h3 style="margin: 22px 0 6px">Skrivemåter valgt som fasit i denne sjekklisten</h3>
+              <p class="a-fasit-note" style="margin-top:0">Det finnes ingen vedtatt standard for disse. Den vanligste skrivemåten i dataene er valgt som fasit;
+                de andre meldes som avvik.</p>
+              <table class="a-fasit-examples"><thead><tr><th>Område</th><th>✓ Fasit (antall)</th><th>✗ Andre skrivemåter (antall)</th></tr></thead><tbody>
+              ${f.fasit
+                .sort((a, b) => a.area.localeCompare(b.area) || b.n - a.n)
+                .map(
+                  (x) => `<tr><td>${escapeHtml(x.area)}</td><td><code>${showWs(x.fasit)}</code> <span class="a-muted">${x.n}</span></td>
+                    <td>${x.others.map(([v, n]) => `<code>${showWs(v)}</code> <span class="a-muted">${n}</span>`).join(", ")}</td></tr>`,
+                )
+                .join("")}</tbody></table>`
+                : ""
+            }
+          </div>
+          <div class="stats-section"><h3>Kontroller</h3>
+            <table class="stats-table"><thead><tr><th>Kontroll</th><th>Type</th><th class="num">Funn</th><th class="num">Sjekkpunkter</th><th>Hva sjekkes</th></tr></thead><tbody>
+            ${rows
+              .map(
+                (x) => `<tr${drillAttrs({ aContentCheck: x.c })}><td class="field">${escapeHtml(CONTENT_CHECKS[x.c].label)}</td>
+                  <td>${chip(CONTENT_CHECKS[x.c].sev, SEV_LABEL[CONTENT_CHECKS[x.c].sev])}</td><td class="num">${x.n}</td><td class="num">${x.points}</td>
+                  <td class="a-muted">${escapeHtml(CONTENT_CHECKS[x.c].help)}</td></tr>`,
+              )
+              .join("")}
+            </tbody></table></div>
+          <p class="stats-hint">Klikk på en rad for å filtrere listen under.</p>`;
+        el.querySelectorAll("[data-drill]").forEach((d) => makeActivatable(d));
+      }
+
+      function filteredContent() {
+        const q = byId("aContentQ").value.trim().toLowerCase();
+        const check = byId("aContentCheck").value;
+        const sev = byId("aContentSev").value;
+        const cat = byId("aContentCat").value;
+        return A.content.filter(
+          (x) =>
+            (!check || x.check === check) &&
+            (!sev || x.sev === sev) &&
+            (!cat || x.cat === cat) &&
+            (!q || `${x.cat} ${x.id} ${x.navn} ${x.field} ${x.value} ${x.detail}`.toLowerCase().includes(q)),
+        );
+      }
+
+      function renderContentList() {
+        if (!A.content) return;
+        ["aContentQ", "aContentCheck", "aContentSev", "aContentCat"].forEach((id) =>
+          byId(id).closest(".filter-group").classList.toggle("active", !!byId(id).value),
+        );
+        const rows = filteredContent();
+        const list = byId("aContentList");
+        if (!rows.length) {
+          list.innerHTML = `<div class="a-empty">Ingen funn passer filteret.</div>`;
+          return;
+        }
+        const groups = new Map();
+        rows.forEach((x) => {
+          if (!groups.has(x.check)) groups.set(x.check, []);
+          groups.get(x.check).push(x);
+        });
+        const order = Object.keys(CONTENT_CHECKS).sort(
+          (a, b) => CONTENT_SEV_ORDER.indexOf(CONTENT_CHECKS[a].sev) - CONTENT_SEV_ORDER.indexOf(CONTENT_CHECKS[b].sev),
+        );
+        const single = groups.size === 1;
+        list.innerHTML = order
+          .filter((c) => groups.has(c))
+          .map((c) => {
+            const g = groups.get(c);
+            const d = CONTENT_CHECKS[c];
+            const hasSugg = g.some((x) => x.suggestion !== null);
+            return `<details class="a-group"${single || d.sev !== "info" ? " open" : ""}>
+              <summary>${chip(d.sev, SEV_LABEL[d.sev])} ${escapeHtml(d.label)} <span class="a-muted">${g.length} funn – ${escapeHtml(d.help)}</span></summary>
+              <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Sjekkpunkt</th><th>Felt</th><th>Verdi</th>
+                ${hasSugg ? "<th>Fasit</th>" : ""}<th>Detalj</th></tr></thead><tbody>
+              ${g
+                .slice(0, A_LIST_LIMIT)
+                .map(
+                  (x) => `<tr><td data-label="Sjekkpunkt">${loc(x)}</td><td class="a-muted" data-label="Felt">${escapeHtml(x.field)}</td>
+                    <td class="a-rule" data-label="Verdi"><span class="a-code">${showWs(x.value)}</span></td>
+                    ${hasSugg ? `<td class="a-rule" data-label="Fasit">${
+                      x.suggestion !== null
+                        ? `<span class="a-code a-fasit-text">${x.suggestion ? escapeHtml(x.suggestion) : "<em>(tom)</em>"}</span>
+                          <span class="a-change">Endring: <span class="a-code">${suggestionDiffHtml(x.value, x.suggestion)}</span></span>`
+                        : ""
+                    }</td>` : ""}
+                    <td class="a-muted" data-label="Detalj">${escapeHtml(x.detail)}</td></tr>`,
+                )
+                .join("")}
+              </tbody></table>${g.length > A_LIST_LIMIT ? `<div class="a-more">Viser de første ${A_LIST_LIMIT} av ${g.length}. Bruk filter eller eksport for resten.</div>` : ""}</div>
+            </details>`;
+          })
+          .join("");
+      }
+
+      // ---- Eksport ---------------------------------------------------------
+      function download(name, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      const csvCell = (v) => {
+        const s = v == null ? "" : String(v);
+        return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const csv = (rows) => "﻿" + rows.map((r) => r.map(csvCell).join(";")).join("\r\n");
+      const fileStem = () =>
+        `sjekkliste-analyse-${A.meta.ds}-${A.meta.env}-${new Date().toISOString().split("T")[0]}`;
+
+      function exportCsv() {
+        if (!A.model) return;
+        if (A.tab === "rules") {
+          const head = ["Prosesskategori", "Id", "Under", "Navn", "Vurdering", "Regeltype", "Regel", "Fasit", "Avvik", "Kryssjekk"];
+          const rows = filteredRules().map((r) => {
+            const row = [
+              r.cat,
+              r.id,
+              r.parentId,
+              r.node.Navn || "",
+              RULE_STATUS[r.a.status].label,
+              r.a.kind ? RULE_KIND[r.a.kind].label : "Ukjent",
+              r.a.raw,
+              r.a.suggestion == null ? "" : r.a.suggestion,
+              r.a.issues.map((i) => RULE_ISSUES[i.code].label + (i.detail ? ` (${i.detail})` : "")).join(" | "),
+              r.cross.map((i) => RULE_ISSUES[i.code].label + (i.detail ? ` (${i.detail})` : "")).join(" | "),
+            ];
+            return row;
+          });
+          download(`${fileStem()}-regler.csv`, csv([head, ...rows]), "text/csv;charset=utf-8");
+        } else {
+          const head = ["Kontroll", "Alvorlighet", "Prosesskategori", "Id", "Under", "Navn", "Felt", "Verdi", "Forslag", "Detalj"];
+          const rows = filteredContent().map((x) => [
+            CONTENT_CHECKS[x.check].label,
+            SEV_LABEL[x.sev],
+            x.cat,
+            x.id,
+            x.parentId,
+            x.navn,
+            x.field,
+            x.value,
+            x.suggestion == null ? "" : x.suggestion,
+            x.detail,
+          ]);
+          download(`${fileStem()}-innhold.csv`, csv([head, ...rows]), "text/csv;charset=utf-8");
+        }
+      }
+
+      function exportJson() {
+        if (!A.model) return;
+        const data = {
+          timestamp: new Date().toISOString(),
+          sjekkliste: SJEKKLISTER[A.meta.ds].label,
+          miljo: envName(A.meta.env),
+          fasit: {
+            pekerPaSjekkpunkt: "If (<betingelse>) then (<sjekkpunkt-Id>)",
+            preutfylling: "If (<betingelse>) then (<sjekkpunkt-Id> = true|false)",
+            betingelse: "ledd { & | || ledd }; ledd = (<sjekkpunkt-Id> | <camelCase-felt>) = true|false",
+          },
+          sammendrag: {
+            sjekkpunkter: A.model.nodes.length,
+            regler: A.model.rules.length,
+            ulikeRegeltekster: A.model.unique.size,
+            vurdering: Object.fromEntries(
+              Object.keys(RULE_STATUS).map((k) => [k, A.model.rules.filter((r) => r.a.status === k).length]),
+            ),
+            innholdsfunn: A.content.length,
+          },
+          regler: A.model.rules.map((r) => ({
+            prosesskategori: r.cat,
+            id: r.id,
+            under: r.parentId || null,
+            navn: r.node.Navn || "",
+            harMaskinlesbarRegel: r.node.HarMaskinlesbarRegel === true,
+            regel: r.a.raw,
+            vurdering: r.a.status,
+            regeltype: r.a.kind,
+            forslag: r.a.suggestion,
+            monster: r.a.pattern,
+            avvik: r.a.issues,
+            kryssjekk: r.cross,
+          })),
+          innhold: A.content,
+        };
+        download(`${fileStem()}.json`, JSON.stringify(data, null, 2), "application/json");
+      }
+
+      // ---- Oppkobling -------------------------------------------------------
+      document.querySelectorAll(".mode-tabs button").forEach((b) =>
+        b.addEventListener("click", () => showView(b.dataset.view)),
+      );
+      document.querySelectorAll(".sub-tabs button").forEach((b) =>
+        b.addEventListener("click", () => showSubTab(b.dataset.tab)),
+      );
+      byId("aLoad").addEventListener("click", runAnalysis);
+      byId("aExportCsv").addEventListener("click", exportCsv);
+      byId("aExportJson").addEventListener("click", exportJson);
+      ["aDs", "aEnv"].forEach((id) =>
+        byId(id).addEventListener("change", () => {
+          resetAnalysis();
+          analysisSync();
+        }),
+      );
+      let aTimer = null;
+      const debounced = (fn) => () => {
+        clearTimeout(aTimer);
+        aTimer = setTimeout(() => {
+          fn();
+          analysisSync();
+        }, 150);
+      };
+      byId("aRuleQ").addEventListener("input", debounced(renderRuleList));
+      byId("aContentQ").addEventListener("input", debounced(renderContentList));
+      ["aRuleStatus", "aRuleCode", "aRuleCat", "aRulePattern", "aRuleKind", "aRuleUnique"].forEach((id) =>
+        byId(id).addEventListener("change", () => {
+          renderRuleList();
+          analysisSync();
+        }),
+      );
+      ["aContentCheck", "aContentSev", "aContentCat"].forEach((id) =>
+        byId(id).addEventListener("change", () => {
+          renderContentList();
+          analysisSync();
+        }),
+      );
+      byId("aRuleReset").addEventListener("click", () => {
+        ["aRuleQ", "aRuleStatus", "aRuleCode", "aRuleCat", "aRulePattern", "aRuleKind"].forEach((id) => (byId(id).value = ""));
+        renderRuleList();
+        analysisSync();
+      });
+      byId("aContentReset").addEventListener("click", () => {
+        ["aContentQ", "aContentCheck", "aContentSev", "aContentCat"].forEach((id) => (byId(id).value = ""));
+        renderContentList();
+        analysisSync();
+      });
+      byId("aRuleSummary").addEventListener("click", (e) => {
+        const d = e.target.closest("[data-drill]");
+        if (d) applyDrill(JSON.parse(d.dataset.drill), "aRuleList");
+      });
+      byId("aContentSummary").addEventListener("click", (e) => {
+        const d = e.target.closest("[data-drill]");
+        if (d) applyDrill(JSON.parse(d.dataset.drill), "aContentList");
+      });
+
+      renderCodeTable();
+      analysisRestore();
     </script>
   </body>
 </html>
