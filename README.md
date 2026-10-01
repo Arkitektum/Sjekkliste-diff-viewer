@@ -214,6 +214,31 @@ viser hver regeltekst én gang med alle sjekkpunktene som bruker den.
 `felt`), slik at sjeldne varianter blir synlige. Listen kan også filtreres på
 **regeltype**.
 
+### Rett automatisk (SQL-skript)
+
+Under **Rett automatisk** i regelfanen lager **Last ned SQL-skript** et skript
+som skriver inn fasit-regelen på hvert sjekkpunkt med feil skrivemåte i det
+analyserte miljøet (`ÅÅÅÅMMDD-retting-regel-<sjekkliste>-<miljø>.sql`, samme
+navnemønster som `src/SQL scripts/Adhoc/` i backend-repoet).
+
+- Hver rad i skriptet er ett sjekkpunkt: `SjekkId` fra API-et (= `Activity.Id`),
+  regelen slik den står nå, og fasit-regelen.
+- Skriptet kjøres **kun mot databasen for miljøet som ble analysert**. `SjekkId`
+  er ulik mellom miljøene.
+- Det starter i **prøvemodus** (`@dryRun = 1`): alt kjøres og vises, men rulles
+  tilbake. Sett `@dryRun = 0` for å lagre. `@undo = 1` reverserer rettingene.
+- Publisert rad (`Status = 1`) rettes bare hvis regelen fortsatt er nøyaktig lik
+  verdien da analysen ble kjørt (binær sammenligning, så store/små bokstaver og
+  mellomrom telles). Rader som ikke kan rettes, listes.
+- Åpne kladder (`Status = 0`, `PublishedActivity_Id = Id`) med samme gamle regel
+  rettes også. Ellers ville neste publisering lagt tilbake den gamle teksten.
+  Kladder med en annen regel listes og røres ikke.
+- `Updated` settes på rader som endres. `HasRule` endres ikke.
+- Tolkede rettinger (ledd uten `= true/false`, datafelt i camelCase) tas bare med
+  hvis du krysser av for det. Uten avkrysning rettes slike regler bare for
+  skrivemåte, eller de utelates.
+- Tomme regler (bare linjeskift) settes til `NULL`.
+
 ### Innholdskvalitet
 
 | Kontroll | Type | Hva sjekkes |

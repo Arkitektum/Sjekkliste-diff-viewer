@@ -1349,6 +1349,59 @@
         border-radius: var(--radius-sm);
       }
 
+      .a-fix-panel {
+        margin-top: 24px;
+        padding: 18px 20px;
+        border: 1px solid #bbf7d0;
+        border-left: 6px solid var(--success);
+        border-radius: var(--radius);
+        background: #f0fdf4;
+      }
+
+      .a-fix-panel h3 {
+        font-size: 16px;
+        margin-bottom: 6px;
+      }
+
+      .a-fix-panel p {
+        font-size: 13.5px;
+        color: var(--grey-700);
+      }
+
+      .a-fix-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        margin: 12px 0;
+      }
+
+      .a-fix-actions button {
+        background: var(--success);
+      }
+
+      .a-fix-actions button:hover:not(:disabled) {
+        background: #04804c;
+      }
+
+      .a-check-inline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        cursor: pointer;
+      }
+
+      .a-check-inline input {
+        width: auto;
+      }
+
+      .a-fix-notes {
+        font-size: 12.5px;
+        color: var(--grey-600);
+        padding-left: 18px;
+      }
+
       .a-fasit-intro {
         margin-bottom: 14px;
         color: var(--grey-700);
@@ -6078,14 +6131,15 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
         visit(cond, null, true);
       }
 
-      function printRuleCondition(n, parentOp) {
-        if (n.type === "group") return printRuleCondition(n.expr, parentOp);
+      // keepNames: behold datafeltnavn som de er skrevet (ingen camelCase-retting).
+      function printRuleCondition(n, parentOp, keepNames) {
+        if (n.type === "group") return printRuleCondition(n.expr, parentOp, keepNames);
         if (n.type === "cmp") {
           const v = n.value.kind === "bool" ? n.value.text.toLowerCase() : n.value.text;
-          return `${n.ref.fixed || n.ref.text} = ${v}`;
+          return `${(!keepNames && n.ref.fixed) || n.ref.text} = ${v}`;
         }
         const sep = n.op === "and" ? " & " : " || ";
-        const s = n.items.map((c) => printRuleCondition(c, n.op)).join(sep);
+        const s = n.items.map((c) => printRuleCondition(c, n.op, keepNames)).join(sep);
         return parentOp && parentOp !== n.op ? `(${s})` : s;
       }
 
@@ -6123,6 +6177,9 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
           res.issues.push({ code: "OTHER_FORM", detail: "" });
           res.status = "fixable";
         } else if (res.status === "ok") res.suggestion = null;
+        // Sikker retting = forslaget uten tolkninger. Null når det ikke er noe
+        // sikkert å rette.
+        if (res.status !== "fixable" || res.safeSuggestion === res.raw) res.safeSuggestion = null;
         return res;
       }
 
@@ -6132,6 +6189,7 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
           status: "ok",
           issues: [],
           suggestion: null,
+          safeSuggestion: null,
           pattern: "",
           ids: [],
           fields: [],
@@ -6151,6 +6209,7 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
           add("EMPTY");
           res.pattern = "(tom)";
           res.suggestion = "";
+          res.safeSuggestion = "";
           return finishRule(res);
         }
         if (trimmed !== raw) add("TRIM");
@@ -6236,6 +6295,11 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
           return finishRule(res);
         const outcome = out.kind === "preutfylling" ? `${out.target} = ${out.value}` : out.target;
         res.suggestion = `If (${printRuleCondition(cond, null)}) then (${outcome})`;
+        // Uten tolkninger: ledd uten verdi kan ikke skrives ut uten å gjette, og
+        // datafeltnavn beholdes slik de står.
+        res.safeSuggestion = res.issues.some((i) => i.code === "SHORTHAND")
+          ? null
+          : `If (${printRuleCondition(cond, null, true)}) then (${outcome})`;
         return finishRule(res);
       }
 
@@ -6669,6 +6733,186 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
         return out;
       }
 
+      // ---- SQL for automatisk retting av Regel -------------------------------
+      // Activity.Id er SjekkId i API-et (den publiserte raden, Status = 1).
+      // Redigering skjer i en kladd (Status = 0, PublishedActivity_Id = Id) som
+      // kopieres over den publiserte raden ved publisering. Derfor rettes også
+      // åpne kladder med samme gamle regel; ellers ville neste publisering lagt
+      // den gamle teksten tilbake.
+
+      // Rettingene som skal med: én per SjekkId. Uten tolkninger brukes den
+      // sikre varianten av forslaget.
+      function ruleFixes(model, includeInterpreted) {
+        const byId = new Map();
+        let interpreted = 0;
+        model.rules.forEach((r) => {
+          if (r.a.status !== "fixable") return;
+          const id = r.node.SjekkId;
+          if (id == null || byId.has(id)) return;
+          const hasInterpretation = r.a.suggestion !== r.a.safeSuggestion;
+          if (hasInterpretation) interpreted++;
+          const target = includeInterpreted ? r.a.suggestion : r.a.safeSuggestion;
+          if (target == null || target === r.a.raw) return;
+          byId.set(id, {
+            id,
+            cat: r.cat,
+            checkpoint: r.id,
+            oldRule: r.a.raw,
+            newRule: target === "" ? null : target,
+            issues: r.a.issues.map((i) => RULE_ISSUES[i.code].label).join(", "),
+            partial: !includeInterpreted && hasInterpretation,
+          });
+        });
+        return { fixes: [...byId.values()], interpreted };
+      }
+
+      // T-SQL-literal uten rå linjeskift: kontrolltegn skrives som NCHAR(n), så
+      // verdien ikke endres om fila åpnes i en editor som bytter linjeskift.
+      function sqlLiteral(s) {
+        if (s == null) return "NULL";
+        const parts = [];
+        let buf = "";
+        const flush = () => {
+          if (buf) parts.push(`N'${buf.replace(/'/g, "''")}'`);
+          buf = "";
+        };
+        for (const ch of s) {
+          const c = ch.codePointAt(0);
+          if (c < 32 || c === 127) {
+            flush();
+            parts.push(`NCHAR(${c})`);
+          } else buf += ch;
+        }
+        flush();
+        return parts.length ? parts.join(" + ") : "N''";
+      }
+
+      // Binær sammenligning: SQL Server ser ellers bort fra store/små bokstaver
+      // og avsluttende mellomrom, og det er nettopp slike forskjeller som rettes.
+      const SQL_SAME = (a, b) =>
+        `ISNULL(CAST(${a} AS varbinary(max)), 0x) = ISNULL(CAST(${b} AS varbinary(max)), 0x)`;
+      const SQL_DIFF = (a, b) =>
+        `ISNULL(CAST(${a} AS varbinary(max)), 0x) <> ISNULL(CAST(${b} AS varbinary(max)), 0x)`;
+
+      function buildRuleFixSql(model, meta) {
+        const { fixes, interpreted } = ruleFixes(model, meta.includeInterpreted);
+        const stamp = (d) => d.toISOString().replace("T", " ").slice(0, 16);
+        const partial = fixes.filter((f) => f.partial).length;
+        const L = [];
+        const out = (l) => L.push(l);
+        out("/*");
+        out("  Automatisk retting av Regel-feltet (Activity.[Rule])");
+        out(`  Sjekkliste : ${meta.sjekkliste}`);
+        out(`  Miljø      : ${meta.env}  – kjøres KUN mot databasen for dette miljøet (SjekkId er ulik per miljø)`);
+        out(`  Kilde      : ${meta.url}`);
+        out(`  Hentet     : ${stamp(meta.loadedAt)} UTC`);
+        out(`  Generert   : ${stamp(new Date())} UTC av Sjekkliste-diff-viewer (Kvalitetsanalyse)`);
+        out("");
+        out(`  Retter ${fixes.length} sjekkpunkter.`);
+        if (meta.includeInterpreted)
+          out("  Tolkede rettinger (ledd uten = true/false, datafelt i camelCase) ER tatt med.");
+        else
+          out(
+            `  Tolkede rettinger (ledd uten = true/false, datafelt i camelCase) er IKKE tatt med: ${interpreted} regler har slike; ` +
+              `${partial} av dem rettes bare for skrivemåte, resten utelates.`,
+          );
+        out("");
+        out("  Slik virker skriptet:");
+        out("  - Publisert rad (Status = 1) rettes bare hvis [Rule] fortsatt er nøyaktig lik verdien");
+        out("    da analysen ble kjørt (binær sammenligning). Rader som ikke kan rettes, listes.");
+        out("  - Åpne kladder (Status = 0, PublishedActivity_Id = Id) med samme gamle regel rettes også,");
+        out("    ellers ville neste publisering lagt tilbake den gamle teksten. Kladder med en annen regel listes.");
+        out("  - Updated settes til GETDATE() på rader som endres. HasRule endres ikke.");
+        out("  - @dryRun = 1 (standard): alt kjøres og vises, men rulles tilbake. Sett @dryRun = 0 for å lagre.");
+        out("  - @undo = 1: reverserer rettingene (bytter gammel og ny regel).");
+        out("*/");
+        out("SET NOCOUNT ON;");
+        out("SET XACT_ABORT ON;");
+        out("");
+        out("DECLARE @dryRun bit = 1;");
+        out("DECLARE @undo   bit = 0;");
+        out("");
+        out("DECLARE @fix TABLE (");
+        out("    Id              int PRIMARY KEY,");
+        out("    Prosesskategori nvarchar(20),");
+        out("    Sjekkpunkt      nvarchar(50),");
+        out("    OldRule         nvarchar(max),");
+        out("    NewRule         nvarchar(max),");
+        out("    Avvik           nvarchar(1000)");
+        out(");");
+        out("");
+        // SQL Server tillater maks 1000 rader per VALUES-liste.
+        for (let i = 0; i < fixes.length; i += 500) {
+          const chunk = fixes.slice(i, i + 500);
+          out("INSERT INTO @fix (Id, Prosesskategori, Sjekkpunkt, OldRule, NewRule, Avvik) VALUES");
+          chunk.forEach((f, k) =>
+            out(
+              `    (${Number(f.id)}, ${sqlLiteral(f.cat)}, ${sqlLiteral(f.checkpoint)}, ` +
+                `${sqlLiteral(f.oldRule)}, ${sqlLiteral(f.newRule)}, ` +
+                `${sqlLiteral(f.issues + (f.partial ? " – delvis: tolkede rettinger er utelatt" : ""))})${k === chunk.length - 1 ? ";" : ","}`,
+            ),
+          );
+          out("");
+        }
+        out("-- Reversering: bytt gammel og ny verdi.");
+        out("IF @undo = 1 UPDATE @fix SET OldRule = NewRule, NewRule = OldRule;");
+        out("");
+        out("BEGIN TRY");
+        out("    BEGIN TRANSACTION;");
+        out("");
+        out("    -- 1. Publiserte rader som IKKE kan rettes: finnes ikke, er ikke publisert, eller er endret siden analysen.");
+        out("    SELECT f.Prosesskategori, f.Sjekkpunkt, f.Id,");
+        out("           CASE WHEN a.Id IS NULL THEN N'Finnes ikke'");
+        out("                WHEN a.Status <> 1 THEN CONCAT(N'Ikke publisert (Status = ', a.Status, N')')");
+        out("                ELSE N'Regel endret siden analysen' END AS Arsak,");
+        out("           a.[Rule] AS RegelNa, f.OldRule AS RegelVedAnalyse");
+        out("    FROM @fix f");
+        out("    LEFT JOIN Activity a ON a.Id = f.Id");
+        out(`    WHERE a.Id IS NULL OR a.Status <> 1 OR ${SQL_DIFF("a.[Rule]", "f.OldRule")};`);
+        out("");
+        out("    -- 2. Rett publiserte rader.");
+        out("    UPDATE a SET a.[Rule] = f.NewRule, a.Updated = GETDATE()");
+        out("    FROM Activity a");
+        out("    JOIN @fix f ON a.Id = f.Id");
+        out(`    WHERE a.Status = 1 AND ${SQL_SAME("a.[Rule]", "f.OldRule")};`);
+        out("    DECLARE @published int = @@ROWCOUNT;");
+        out("");
+        out("    -- 3. Rett åpne kladder som fortsatt har den gamle regelen.");
+        out("    UPDATE d SET d.[Rule] = f.NewRule, d.Updated = GETDATE()");
+        out("    FROM Activity d");
+        out("    JOIN @fix f ON d.PublishedActivity_Id = f.Id");
+        out(`    WHERE d.Status = 0 AND ${SQL_SAME("d.[Rule]", "f.OldRule")};`);
+        out("    DECLARE @drafts int = @@ROWCOUNT;");
+        out("");
+        out("    -- 4. Kladder med en annen regel – ikke endret, bør sjekkes manuelt.");
+        out("    SELECT N'Kladd med annen regel – ikke endret' AS Merknad, d.Id AS KladdId,");
+        out("           f.Prosesskategori, f.Sjekkpunkt, d.[Rule] AS RegelIKladd, f.NewRule AS Fasit");
+        out("    FROM Activity d");
+        out("    JOIN @fix f ON d.PublishedActivity_Id = f.Id");
+        out(`    WHERE d.Status = 0 AND ${SQL_DIFF("d.[Rule]", "f.NewRule")};`);
+        out("");
+        out("    DECLARE @total int = (SELECT COUNT(*) FROM @fix);");
+        out("    PRINT CONCAT(N'Publiserte sjekkpunkter rettet: ', @published, N' av ', @total);");
+        out("    PRINT CONCAT(N'Kladder rettet: ', @drafts);");
+        out("");
+        out("    IF @dryRun = 1");
+        out("    BEGIN");
+        out("        ROLLBACK TRANSACTION;");
+        out("        PRINT N'Prøvemodus: ingen endringer er lagret. Sett @dryRun = 0 for å lagre.';");
+        out("    END");
+        out("    ELSE");
+        out("    BEGIN");
+        out("        COMMIT TRANSACTION;");
+        out("        PRINT N'Endringene er lagret.';");
+        out("    END");
+        out("END TRY");
+        out("BEGIN CATCH");
+        out("    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;");
+        out("    THROW;");
+        out("END CATCH;");
+        return { sql: L.join("\r\n") + "\r\n", count: fixes.length, interpreted, partial };
+      }
+
       // @@engine-end
 
       // ---- Visning ---------------------------------------------------------
@@ -7099,6 +7343,8 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
             </div>
           </div>
 
+          ${fixPanelHtml()}
+
           <div class="stats-section"><h3>Hva avviker fra fasit?</h3>
             <p class="stats-section-note">Én regel kan ha flere avvik. «Ulike tekster» teller hver regeltekst én gang, selv om den brukes på flere sjekkpunkter.</p>
             <table class="stats-table"><thead><tr><th>Avvik</th><th>Type</th><th class="num">Sjekkpunkter</th><th class="num">Ulike tekster</th></tr></thead><tbody>
@@ -7493,6 +7739,47 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
         }
       }
 
+      // ---- Retting: SQL-skript ---------------------------------------------
+      function fixPanelHtml() {
+        const safe = ruleFixes(A.model, false);
+        const all = ruleFixes(A.model, true);
+        const env = escapeHtml(envName(A.meta.env));
+        const interp = byId("aFixInterp") ? byId("aFixInterp").checked : false;
+        return `<div class="a-fix-panel">
+          <h3>Rett automatisk</h3>
+          <p>Lag et SQL-skript som skriver inn fasit-regelen på hvert sjekkpunkt med feil skrivemåte i
+            <strong>${env}</strong>. ${safe.fixes.length} sjekkpunkter kan rettes uten tolkning.
+            ${all.interpreted ? `${all.interpreted} har i tillegg tolkede rettinger (ledd uten <code>= true/false</code>,
+            datafelt i camelCase) som bare tas med hvis du krysser av.` : ""}</p>
+          <div class="a-fix-actions">
+            ${all.interpreted ? `<label class="a-check-inline"><input type="checkbox" id="aFixInterp"${interp ? " checked" : ""} />
+              Ta med tolkede rettinger (${all.fixes.length} i alt)</label>` : ""}
+            <button type="button" id="aExportSql"${safe.fixes.length || all.fixes.length ? "" : " disabled"}>⬇ Last ned SQL-skript for ${env}</button>
+          </div>
+          <ul class="a-fix-notes">
+            <li>Kjøres mot databasen for <strong>${env}</strong>. <code>SjekkId</code> er ulik mellom miljøene, så skriptet passer ikke for andre miljøer.</li>
+            <li>Starter i prøvemodus (<code>@dryRun = 1</code>): viser hva som ville blitt rettet og ruller tilbake. Sett <code>@dryRun = 0</code> for å lagre.</li>
+            <li>Retter bare rader der regelen er uendret siden analysen, og retter også åpne kladder, så neste publisering ikke legger tilbake gammel tekst.</li>
+            <li>Kan reverseres med <code>@undo = 1</code>.</li>
+          </ul>
+        </div>`;
+      }
+
+      function exportSql() {
+        if (!A.model) return;
+        const includeInterpreted = byId("aFixInterp") ? byId("aFixInterp").checked : false;
+        const res = buildRuleFixSql(A.model, {
+          sjekkliste: SJEKKLISTER[A.meta.ds].label,
+          env: envName(A.meta.env),
+          url: SJEKKLISTER[A.meta.ds].urls[A.meta.env],
+          loadedAt: A.meta.loadedAt,
+          includeInterpreted,
+        });
+        const d = new Date();
+        const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+        download(`${ymd}-retting-regel-${A.meta.ds}-${A.meta.env}.sql`, res.sql, "application/sql;charset=utf-8");
+      }
+
       function exportJson() {
         if (!A.model) return;
         const data = {
@@ -7581,6 +7868,7 @@ datafelt      = camelCase                            f.eks. norskSvenskDansk</pr
         analysisSync();
       });
       byId("aRuleSummary").addEventListener("click", (e) => {
+        if (e.target.id === "aExportSql") return exportSql();
         const d = e.target.closest("[data-drill]");
         if (d) applyDrill(JSON.parse(d.dataset.drill), "aRuleList");
       });
